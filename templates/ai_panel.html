@@ -5,11 +5,11 @@
 <section class="panel">
     <h2>Panel annIA (potenciada por Grok)</h2>
     <p>
-        Analisis automatizado para apoyar decisiones clinicas: resumen de notas,
-        deteccion de riesgo y recordatorios de seguimiento.
+        Análisis automatizado para apoyar decisiones clínicas: resumen de notas,
+        detección de riesgo y recordatorios de seguimiento.
     </p>
-    <p><strong>Modo de riesgo:</strong> Combinado (diagnostico + contexto clinico).</p>
-    <p><strong>Catalogo de enfermedades cargado:</strong> {{ disease_catalog_count }} entradas.</p>
+    <p><strong>Modo de riesgo:</strong> Combinado (diagnóstico + contexto clínico).</p>
+    <p><strong>Catálogo de enfermedades cargado:</strong> {{ disease_catalog_count }} entradas.</p>
 
     {% if has_grok_api_key %}
         <p><strong>Estado annIA/Grok:</strong> Configurada correctamente.</p>
@@ -28,12 +28,12 @@
         </form>
         {% if used_grok %}
             <p>
-                Reanalisis completado. Nuevos: {{ generated_with_grok }} |
+                Reanálisis completado. Nuevos: {{ generated_with_grok }} |
                 Cache: {{ cache_hits }} |
                 Fallback local: {{ local_fallbacks }}
             </p>
         {% else %}
-            <p>Resumenes locales mostrados para ahorrar consumo de API.</p>
+            <p>Resúmenes locales mostrados para ahorrar consumo de API.</p>
         {% endif %}
     </div>
 
@@ -51,26 +51,26 @@
                 <a href="{{ url_for('patient_detail', patient_id=item['id']) }}">Abrir expediente</a>
             </article>
         {% else %}
-            <p>No hay datos para analizar todavia.</p>
+            <p>No hay datos para analizar todavía.</p>
         {% endfor %}
     </div>
 </section>
 
 <section class="panel">
-    <h2>Chat annIA Clinico (solo personal medico)</h2>
+    <h2>Chat annIA Clínico (solo personal médico)</h2>
     <p>
         Este chat solo ofrece apoyo orientativo: sugerencias y nivel de riesgo.
-        No emite diagnosticos definitivos ni recetas.
+        No emite diagnósticos definitivos ni recetas.
     </p>
     {% if not has_grok_api_key %}
-        <p><strong>Modo actual:</strong> Analisis local (sin Grok API key).</p>
+        <p><strong>Modo actual:</strong> Análisis local (sin Grok API key).</p>
     {% endif %}
 
     <div class="chat-box" id="chat-box">
         {% if chat_history %}
             {% for item in chat_history %}
                 <article class="chat-message {{ item['role'] }}">
-                    <strong>{{ 'Medico' if item['role'] == 'user' else 'annIA (Grok)' }}</strong>
+                    <strong>{{ 'Médico' if item['role'] == 'user' else 'annIA (Grok)' }}</strong>
                     <p>{{ item['content'] }}</p>
                 </article>
             {% endfor %}
@@ -78,8 +78,8 @@
             <article class="chat-message assistant">
                 <strong>annIA (potenciada por Grok)</strong>
                 <p>
-                    Listo para ayudarte con dudas clinicas generales, estratificacion de riesgo y
-                    recomendaciones de seguimiento. No realizo diagnostico ni prescripcion.
+                    Listo para ayudarte con dudas clínicas generales, estratificación de riesgo y
+                    recomendaciones de seguimiento. No realizo diagnóstico ni prescripción.
                 </p>
             </article>
         {% endif %}
@@ -88,7 +88,7 @@
     <form method="post" class="chat-form">
         <input type="hidden" name="action" value="chat">
 
-        <label for="chat_patient_id">Paciente (opcional para contexto clinico)</label>
+        <label for="chat_patient_id">Paciente (opcional para contexto clínico)</label>
         <select id="chat_patient_id" name="chat_patient_id">
             <option value="">Sin paciente seleccionado</option>
             {% for patient in patients %}
@@ -98,13 +98,13 @@
             {% endfor %}
         </select>
 
-        <label for="chat_message">Pregunta clinica</label>
+        <label for="chat_message">Pregunta clínica</label>
         <textarea
             id="chat_message"
             name="chat_message"
             rows="4"
             maxlength="1500"
-            placeholder="Ejemplo: Que seguimiento sugerido recomiendas para este paciente considerando su riesgo actual?"
+            placeholder="Ejemplo: ¿Qué seguimiento sugerido recomiendas para este paciente considerando su riesgo actual?"
             required
         ></textarea>
 
@@ -120,7 +120,7 @@
 
     {% if last_chat_references %}
         <div class="chat-refs">
-            <h3>Referencias usadas en la ultima respuesta</h3>
+            <h3>Referencias usadas en la última respuesta</h3>
             <ul>
                 {% for ref in last_chat_references %}
                     <li>

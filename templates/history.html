@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Historial medico | DocuMed 2.0{% endblock %}
+{% block title %}Historial médico | DocuMed 2.0{% endblock %}
 
 {% block content %}
 <section class="panel">
-    <h2>Historial medico</h2>
-    <p>Linea temporal de consultas y actualizaciones de expediente.</p>
+    <h2>Historial médico</h2>
+    <p>Línea temporal de consultas y actualizaciones de expediente.</p>
 
     <ul class="timeline">
         {% for row in history_rows %}
@@ -12,9 +12,9 @@
                 <span class="date">{{ row['consultation_date'] }}</span>
                 <div>
                     <h3>{{ row['name'] }}</h3>
-                    <p><strong>Diagnostico:</strong> {{ row['diagnosis'] }}</p>
+                    <p><strong>Diagnóstico:</strong> {{ row['diagnosis'] }}</p>
                     <p><strong>Tratamiento:</strong> {{ row['treatment'] }}</p>
-                    <small>Ultima actualizacion: {{ row['updated_at'] }}</small>
+                    <small>Última actualización: {{ row['updated_at'] }}</small>
                 </div>
                 <a href="{{ url_for('patient_detail', patient_id=row['id']) }}">Ver expediente</a>
             </li>

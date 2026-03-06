@@ -3,8 +3,8 @@
 
 {% block content %}
 <section class="panel">
-    <h2>Solicitud de analisis de laboratorio</h2>
-    <p>Analisis de laboratorio completo por secciones, similar al formato de captura.</p>
+    <h2>Solicitud de análisis de laboratorio</h2>
+    <p>Análisis de laboratorio completo por secciones, similar al formato de captura.</p>
 
     <form method="post" class="patient-form lab-sheet-form">
         <input type="hidden" name="action" value="save_lab">
@@ -28,8 +28,8 @@
 
         <div class="lab-sheet-checks">
             <div class="lab-sheet-title">
-                <h3>Analisis de Laboratorio Completo</h3>
-                <p>Completa solo los parametros disponibles para este paciente.</p>
+                <h3>Análisis de Laboratorio Completo</h3>
+                <p>Completa solo los parámetros disponibles para este paciente.</p>
             </div>
             <div class="lab-section-grid">
                 {% for section in lab_panel_sections %}
@@ -57,12 +57,12 @@
 
         <div class="lab-sheet-meta">
             <div>
-                <label for="custom_test_name">Otro analisis (opcional)</label>
-                <input id="custom_test_name" name="custom_test_name" type="text" value="{{ request.form.get('custom_test_name', '') }}" placeholder="Nombre del analisis adicional">
+                <label for="custom_test_name">Otro análisis (opcional)</label>
+                <input id="custom_test_name" name="custom_test_name" type="text" value="{{ request.form.get('custom_test_name', '') }}" placeholder="Nombre del análisis adicional">
             </div>
 
             <div>
-                <label for="custom_result_value">Resultado de otro analisis</label>
+                <label for="custom_result_value">Resultado de otro análisis</label>
                 <input id="custom_result_value" name="custom_result_value" type="text" value="{{ request.form.get('custom_result_value', '') }}" placeholder="Ej: positivo / 15.2">
             </div>
 
@@ -78,17 +78,17 @@
         </div>
 
         <div>
-            <label for="interpretation_notes">Notas clinicas del laboratorio</label>
+            <label for="interpretation_notes">Notas clínicas del laboratorio</label>
             <textarea id="interpretation_notes" name="interpretation_notes" rows="3" placeholder="Observaciones adicionales">{{ request.form.get('interpretation_notes', '') }}</textarea>
         </div>
 
-        <button type="submit" class="btn-primary">Guardar analisis</button>
+        <button type="submit" class="btn-primary">Guardar análisis</button>
     </form>
 </section>
 
 <section class="panel">
     <h2>Chat annIA de laboratorio (potenciada por Grok)</h2>
-    <p>Analiza en conjunto el panel de laboratorio del paciente (todos los resultados de la fecha mas reciente).</p>
+    <p>Analiza en conjunto el panel de laboratorio del paciente (todos los resultados de la fecha más reciente).</p>
     {% if lab_llm_status %}
         <p><strong>Estado IA:</strong> {{ lab_llm_status }}</p>
     {% endif %}
@@ -106,7 +106,7 @@
             {% endfor %}
         </select>
 
-        <label for="lab_chat_message">Consulta clinica (opcional)</label>
+        <label for="lab_chat_message">Consulta clínica (opcional)</label>
         <textarea id="lab_chat_message" name="lab_chat_message" rows="3" placeholder="Ej. Resume alteraciones principales y riesgo orientativo del panel completo"></textarea>
 
         <button type="submit" class="btn-primary">Analizar con IA</button>
@@ -121,21 +121,21 @@
         {% if lab_chat_history %}
             {% for item in lab_chat_history %}
                 <article class="chat-message {{ item['role'] }}">
-                    <strong>{{ 'Medico' if item['role'] == 'user' else 'annIA Lab (Grok)' }}</strong>
+                    <strong>{{ 'Médico' if item['role'] == 'user' else 'annIA Lab (Grok)' }}</strong>
                     <p>{{ item['content'] }}</p>
                 </article>
             {% endfor %}
         {% else %}
             <article class="chat-message assistant">
                 <strong>annIA Lab (potenciada por Grok)</strong>
-                <p>Selecciona solo el paciente y recibiras un analisis integral del panel de laboratorio mas reciente.</p>
+                <p>Selecciona solo el paciente y recibirás un análisis integral del panel de laboratorio más reciente.</p>
             </article>
         {% endif %}
     </div>
 </section>
 
 <section class="panel">
-    <h2>Analisis registrados</h2>
+    <h2>Análisis registrados</h2>
     <div class="table-wrap">
         <table>
             <thead>
@@ -160,7 +160,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6" class="empty">No hay analisis registrados.</td>
+                        <td colspan="6" class="empty">No hay análisis registrados.</td>
                     </tr>
                 {% endfor %}
             </tbody>

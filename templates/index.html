@@ -4,9 +4,9 @@
 {% block content %}
 <section class="hero">
     <div>
-        <h2>Panel de control clinico</h2>
+        <h2>Panel de control clínico</h2>
         <p>
-            Gestiona expedientes medicos, registra consultas y obtien sugerencias inteligentes
+            Gestiona expedientes médicos, registra consultas y obtén sugerencias inteligentes
             para mejorar el seguimiento de pacientes.
         </p>
     </div>
@@ -19,19 +19,19 @@
 <section class="card-grid">
     <a class="card-link" href="{{ url_for('list_patients') }}">
         <h3>Ver pacientes</h3>
-        <p>Consulta todos los registros activos y su ultima visita.</p>
+        <p>Consulta todos los registros activos y su última visita.</p>
     </a>
     <a class="card-link" href="{{ url_for('register_patient') }}">
         <h3>Registrar paciente</h3>
-        <p>Ingresa un nuevo expediente clinico en segundos.</p>
+        <p>Ingresa un nuevo expediente clínico en segundos.</p>
     </a>
     <a class="card-link" href="{{ url_for('history') }}">
-        <h3>Ver historial medico</h3>
+        <h3>Ver historial médico</h3>
         <p>Revisa consultas anteriores y cambios en tratamientos.</p>
     </a>
     <a class="card-link" href="{{ url_for('ai_panel') }}">
         <h3>Panel annIA (Grok)</h3>
-        <p>Resumen de notas, deteccion de riesgo y recordatorios.</p>
+        <p>Resumen de notas, detección de riesgo y recordatorios.</p>
     </a>
 </section>
 
@@ -51,7 +51,7 @@
             {% endfor %}
         </ul>
     {% else %}
-        <p>No hay pacientes registrados todavia.</p>
+        <p>No hay pacientes registrados todavía.</p>
     {% endif %}
 </section>
 {% endblock %}

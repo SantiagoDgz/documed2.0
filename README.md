@@ -1,6 +1,6 @@
 # DocuMed 2.0
 
-Aplicacion web de expedientes medicos digitales con backend en Python, base de datos SQLite, frontend HTML/CSS/JavaScript e integracion de funciones de apoyo con IA basada en reglas clinicas iniciales.
+Aplicación web de expedientes médicos digitales con backend en Python, base de datos SQLite, frontend HTML/CSS/JavaScript e integración de funciones de apoyo con IA basada en reglas clínicas iniciales.
 
 ## 1) Estructura del proyecto
 
@@ -38,7 +38,7 @@ documed2.0/
 
 - Iniciar el servidor web con Flask.
 - Conectar con la base de datos SQLite.
-- Recibir informacion del formulario medico.
+- Recibir información del formulario médico.
 - Guardar, editar y eliminar pacientes.
 - Enviar datos a las plantillas HTML para mostrarlos en pantalla.
 - Ejecutar funciones de apoyo de IA para resumen, riesgo y seguimiento.
@@ -59,15 +59,15 @@ La tabla `patients` incluye:
 
 ## 4) Paginas HTML implementadas
 
-- `index.html`: panel principal del medico, descripcion del sistema y accesos rapidos.
+- `index.html`: panel principal del médico, descripción del sistema y accesos rápidos.
 - `register.html`: formulario de registro de pacientes.
 - `patients.html`: lista de pacientes en tabla con acciones de ver, editar y eliminar.
 - `patient_detail.html`: expediente completo del paciente.
-- `edit_patient.html`: edicion de expediente.
-- `history.html`: historial medico cronologico.
+- `edit_patient.html`: edición de expediente.
+- `history.html`: historial médico cronológico.
 - `ai_panel.html`: panel de inteligencia artificial con insights clinicos.
-- `laboratories.html`: registro de laboratorios y chat IA para resumen de analisis.
-- `prescriptions.html`: area de elaboracion y consulta de recetas medicas.
+- `laboratories.html`: registro de laboratorios y chat IA para resumen de análisis.
+- `prescriptions.html`: área de elaboración y consulta de recetas médicas.
 
 ## 5) Estilo visual (CSS)
 
@@ -81,16 +81,16 @@ Se aplico la paleta solicitada:
 - Hover: `#66E0FF`
 - Destacados: `#1A9CFF`
 
-Incluye diseno responsivo para escritorio y movil.
+Incluye diseño responsivo para escritorio y móvil.
 
 ## 6) Interactividad con JavaScript
 
 `static/js/app.js` implementa:
 
-- Validacion de campos obligatorios en formularios.
+- Validación de campos obligatorios en formularios.
 - Mensaje al guardar pacientes.
-- Confirmacion antes de eliminar registros.
-- Filtro rapido por nombre o diagnostico.
+- Confirmación antes de eliminar registros.
+- Filtro rápido por nombre o diagnóstico.
 - Ordenamiento de la tabla por nombre, edad y fecha.
 
 ## 7) Integracion IA (fase inicial)
@@ -98,8 +98,8 @@ Incluye diseno responsivo para escritorio y movil.
 En `app.py` se incluyen funciones para:
 
 - Resumir notas medicas largas.
-- Detectar riesgo basico por palabras clave y edad.
-- Generar recordatorios de seguimiento segun ultima consulta.
+- Detectar riesgo básico por palabras clave y edad.
+- Generar recordatorios de seguimiento según última consulta.
 
 El panel IA usa resumen local por defecto para ahorrar consumo de API.
 Si deseas usar Grok en tiempo real, usa el boton `Reanalizar con IA` en `ai_panel`.
@@ -110,23 +110,23 @@ Al reanalizar, el sistema usa cache por paciente en SQLite:
 - Si cambian `diagnosis`, `treatment` o `medical_notes`, se invalida el cache automaticamente.
 - El panel muestra metricas de ejecucion: nuevos, cache y fallback local.
 
-Tambien incluye un chat IA clinico para personal medico:
+También incluye un chat IA clínico para personal médico:
 
-- Permite consultas medicas orientativas y seguimiento.
+- Permite consultas médicas orientativas y seguimiento.
 - Puede usar contexto de un paciente seleccionado para estimar riesgo.
-- No entrega diagnostico definitivo ni recetas/prescripciones.
-- Responde con enfoque en riesgo, sugerencias y alertas clinicas.
+- No entrega diagnóstico definitivo ni recetas/prescripciones.
+- Responde con enfoque en riesgo, sugerencias y alertas clínicas.
 
-Nuevos modulos clinicos:
+Nuevos módulos clínicos:
 
 - Laboratorios:
 - Registro de estudios (resultado, unidades, rango, fecha, notas).
 - Chat IA de laboratorio para resumen orientativo y riesgo sugerido.
 - Fallback local cuando la IA externa no responde.
-- Catalogo de parametros de laboratorio cargado segun formato clinico:
+- Catálogo de parámetros de laboratorio cargado según formato clínico:
 - Hematologia, Inmunologia, Bioquimica, Bacteriologia,
   Microbiologia, Uroanalisis, Parasitologia, Baciloscopia y Otros.
-- Soporta opcion "Otro" para estudios fuera del catalogo.
+- Soporta opción "Otro" para estudios fuera del catálogo.
 
 - Recetas:
 - Registro estructurado de prescripciones por paciente.
@@ -139,10 +139,10 @@ El chat integra una base de conocimiento local (RAG simple):
 - Usa esas referencias para enriquecer respuesta IA y fallback local.
 - Muestra en interfaz las referencias usadas en la ultima respuesta.
 
-Para ampliar el conocimiento medico del sistema, agrega nuevas guias a `knowledge/`.
+Para ampliar el conocimiento médico del sistema, agrega nuevas guías a `knowledge/`.
 Recomendado: protocolos institucionales, red flags por especialidad y rutas de referencia.
 
-Adicionalmente, existe un catalogo estructurado de enfermedades y severidad en:
+Adicionalmente, existe un catálogo estructurado de enfermedades y severidad en:
 
 - `knowledge/disease_risk_catalog.txt`
 
@@ -153,27 +153,27 @@ termino|alto|nota opcional
 termino|medio|nota opcional
 ```
 
-El motor de riesgo usa este catalogo para reconocer mas patologias y ajustar el nivel
-de riesgo automaticamente cuando detecta terminos clinicos relevantes.
+El motor de riesgo usa este catálogo para reconocer más patologías y ajustar el nivel
+de riesgo automáticamente cuando detecta términos clínicos relevantes.
 
 Regla actual de clasificacion de riesgo:
 
-- El riesgo se calcula en modo combinado: `diagnosis` + contexto clinico (`medical_notes`, `treatment`).
-- Tambien considera senales de descompensacion y edad para priorizacion clinica.
+- El riesgo se calcula en modo combinado: `diagnosis` + contexto clínico (`medical_notes`, `treatment`).
+- También considera señales de descompensación y edad para priorización clínica.
 
 Esto permite evolucionar hacia modelos de IA mas avanzados en siguientes iteraciones.
 
 ## 8) Flujo general
 
-1. El medico abre la aplicacion.
+1. El médico abre la aplicación.
 2. El servidor Python carga la pagina principal.
 3. Registra pacientes o consulta expedientes.
 4. Los datos se guardan en SQLite.
-5. Python procesa informacion clinica.
+5. Python procesa información clínica.
 6. JavaScript mejora la experiencia en frontend.
 7. El panel IA genera apoyo para seguimiento y priorizacion.
 
-## 9) Ejecucion local
+## 9) Ejecución local
 
 ### Requisitos
 
@@ -214,15 +214,15 @@ python app.py
 http://127.0.0.1:5000
 ```
 
-## 10) Despliegue en Render (produccion)
+## 10) Despliegue en Render (producción)
 
-Este proyecto incluye configuracion para Render en `render.yaml`.
+Este proyecto incluye configuración para Render en `render.yaml`.
 
-### Opcion A: despliegue automatico con `render.yaml`
+### Opción A: despliegue automático con `render.yaml`
 
 1. Sube cambios a GitHub.
 2. En Render, crea un nuevo servicio web conectado a este repositorio.
-3. Render detectara `render.yaml` y configurara:
+3. Render detectará `render.yaml` y configurará:
 - Build: `pip install -r requirements.txt`
 - Start: `gunicorn app:app`
 
@@ -232,9 +232,9 @@ Este proyecto incluye configuracion para Render en `render.yaml`.
 GROK_API_KEY=tu_api_key_real
 ```
 
-`SECRET_KEY` se genera automaticamente por `render.yaml`.
+`SECRET_KEY` se genera automáticamente por `render.yaml`.
 
-### Opcion B: configuracion manual en Render
+### Opción B: configuración manual en Render
 
 - Runtime: Python
 - Build command: `pip install -r requirements.txt`
@@ -248,15 +248,15 @@ GROK_API_KEY=tu_api_key_real
 ### Notas importantes de datos
 
 - En este proyecto se usa SQLite local (`database/patients.db`).
-- En hosting tipo Render (disco efimero), la data puede perderse al redeploy/restart.
-- Para persistencia real en produccion, migra a PostgreSQL administrado.
+- En hosting tipo Render (disco efímero), la data puede perderse al redeploy/restart.
+- Para persistencia real en producción, migra a PostgreSQL administrado.
 
 ## 11) Objetivo del sistema
 
 DocuMed 2.0 busca:
 
-- Organizar expedientes medicos digitales.
-- Ahorrar tiempo operativo al medico.
+- Organizar expedientes médicos digitales.
+- Ahorrar tiempo operativo al médico.
 - Reducir errores administrativos.
 - Facilitar acceso a informacion clinica.
 - Apoyar decisiones medicas con tecnologia.

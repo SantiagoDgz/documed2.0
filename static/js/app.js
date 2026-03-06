@@ -41,7 +41,7 @@ function setupDeleteConfirmation() {
     const forms = document.querySelectorAll(".delete-form");
     forms.forEach((form) => {
         form.addEventListener("submit", (event) => {
-            const accepted = window.confirm("Esta accion eliminara el expediente. Deseas continuar?");
+            const accepted = window.confirm("Esta acción eliminará el expediente. ¿Deseas continuar?");
             if (!accepted) {
                 event.preventDefault();
             }
