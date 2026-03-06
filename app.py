@@ -226,7 +226,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "documed-dev-key")
 app.config["DATABASE"] = str(DATABASE_PATH)
 app.config["GROK_API_KEY"] = os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY", "")
-# Keep model empty by default so provider-specific candidates are selected automatically.
 app.config["GROK_MODEL"] = os.getenv("GROK_MODEL", "")
 app.config["GROK_PROVIDER"] = os.getenv("GROK_PROVIDER", "auto")
 
@@ -1809,7 +1808,10 @@ def ai_panel() -> str:
     patients = db.execute("SELECT * FROM patients ORDER BY consultation_date DESC").fetchall()
     disease_catalog_count = len(get_disease_catalog_entries())
     action = request.form.get("action", "") if request.method == "POST" else ""
-    run_grok = action == "reanalyze"
+    has_grok_api_key = bool(app.config["GROK_API_KEY"].strip())
+    # Default behavior: use Grok whenever API key is configured.
+    run_grok = has_grok_api_key
+    force_reanalyze = action == "reanalyze"
     chat_history = session.get("ai_chat_history", [])
     last_chat_references = session.get("ai_chat_last_references", [])
     llm_runtime_status = session.get("ai_llm_status", "")
@@ -1824,7 +1826,7 @@ def ai_panel() -> str:
         if selected_patient is not None:
             selected_patient_context = build_patient_context(selected_patient)
 
-    if run_grok and not app.config["GROK_API_KEY"]:
+    if run_grok and not has_grok_api_key:
         flash("No hay API key configurada para ejecutar Grok.", "error")
         run_grok = False
 
@@ -1890,7 +1892,8 @@ def ai_panel() -> str:
             cached_model = patient["ai_summary_model"]
 
             if (
-                cached_summary
+                not force_reanalyze
+                and cached_summary
                 and cached_fingerprint == fingerprint
                 and cached_model == app.config["GROK_MODEL"]
             ):
@@ -1946,7 +1949,7 @@ def ai_panel() -> str:
         insights=insights,
         patients=patients,
         disease_catalog_count=disease_catalog_count,
-        has_grok_api_key=bool(app.config["GROK_API_KEY"]),
+        has_grok_api_key=has_grok_api_key,
         used_grok=run_grok,
         cache_hits=cache_hits,
         generated_with_grok=generated_with_grok,

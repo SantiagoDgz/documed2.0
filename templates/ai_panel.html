@@ -24,16 +24,16 @@
     <div class="ai-actions">
         <form method="post">
             <input type="hidden" name="action" value="reanalyze">
-            <button type="submit" class="btn-primary">Reanalizar con IA</button>
+            <button type="submit" class="btn-primary">Forzar reanálisis con IA</button>
         </form>
         {% if used_grok %}
             <p>
-                Reanálisis completado. Nuevos: {{ generated_with_grok }} |
+                IA activa. Nuevos: {{ generated_with_grok }} |
                 Cache: {{ cache_hits }} |
                 Fallback local: {{ local_fallbacks }}
             </p>
         {% else %}
-            <p>Resúmenes locales mostrados para ahorrar consumo de API.</p>
+            <p>Sin API key valida: se muestra análisis local.</p>
         {% endif %}
     </div>
 
