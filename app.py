@@ -1337,6 +1337,9 @@ def chat_with_grok_for_staff(
         "PROHIBIDO: dar diagnostico definitivo, recetas, dosis o prescripciones. "
         "Debes incluir: 1) Riesgo estimado (Bajo/Medio/Alto), "
         "2) Sugerencias de seguimiento, 3) Alertas o red flags. "
+        "Incluye respuesta desarrollada y util para trabajo clinico: "
+        "motivos del riesgo, hallazgos clave, proximos pasos y criterios de escalamiento. "
+        "Usa secciones con titulos claros y bullets cuando sea posible. "
         "Aclara siempre que la decision final la toma el profesional tratante."
     )
 
@@ -1835,6 +1838,15 @@ def ai_panel() -> str:
         if not chat_message:
             flash("Escribe una consulta para el chat IA.", "error")
         else:
+            short_query = normalize_text(chat_message)
+            if len(short_query) <= 12 or short_query in {"resume", "resumen", "analiza", "analisis"}:
+                chat_message = (
+                    "Genera un resumen clinico completo del paciente con: "
+                    "1) estado actual, 2) riesgo y motivos, 3) plan de seguimiento, "
+                    "4) alertas/red flags, 5) proximos pasos sugeridos. "
+                    "Responde con secciones claras y lenguaje medico practico."
+                )
+
             if len(chat_message) > 1500:
                 chat_message = chat_message[:1500]
 
