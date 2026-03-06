@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="panel">
-    <h2>Panel de inteligencia artificial</h2>
+    <h2>Panel annIA (potenciada por Grok)</h2>
     <p>
         Analisis automatizado para apoyar decisiones clinicas: resumen de notas,
         deteccion de riesgo y recordatorios de seguimiento.
@@ -12,9 +12,9 @@
     <p><strong>Catalogo de enfermedades cargado:</strong> {{ disease_catalog_count }} entradas.</p>
 
     {% if has_grok_api_key %}
-        <p><strong>Estado API Grok:</strong> Configurada correctamente.</p>
+        <p><strong>Estado annIA/Grok:</strong> Configurada correctamente.</p>
     {% else %}
-        <p><strong>Estado API Grok:</strong> No configurada. Agrega `GROK_API_KEY` en tu archivo `.env`.</p>
+        <p><strong>Estado annIA/Grok:</strong> No configurada. Agrega `GROK_API_KEY` en tu archivo `.env`.</p>
     {% endif %}
     <p><strong>Proveedor detectado:</strong> {{ llm_provider }}</p>
     {% if llm_runtime_status %}
@@ -57,7 +57,7 @@
 </section>
 
 <section class="panel">
-    <h2>Chat IA Clinico (solo personal medico)</h2>
+    <h2>Chat annIA Clinico (solo personal medico)</h2>
     <p>
         Este chat solo ofrece apoyo orientativo: sugerencias y nivel de riesgo.
         No emite diagnosticos definitivos ni recetas.
@@ -70,13 +70,13 @@
         {% if chat_history %}
             {% for item in chat_history %}
                 <article class="chat-message {{ item['role'] }}">
-                    <strong>{{ 'Medico' if item['role'] == 'user' else 'Asistente IA' }}</strong>
+                    <strong>{{ 'Medico' if item['role'] == 'user' else 'annIA (Grok)' }}</strong>
                     <p>{{ item['content'] }}</p>
                 </article>
             {% endfor %}
         {% else %}
             <article class="chat-message assistant">
-                <strong>Asistente IA</strong>
+                <strong>annIA (potenciada por Grok)</strong>
                 <p>
                     Listo para ayudarte con dudas clinicas generales, estratificacion de riesgo y
                     recomendaciones de seguimiento. No realizo diagnostico ni prescripcion.
