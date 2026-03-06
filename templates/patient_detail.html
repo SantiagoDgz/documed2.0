@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Expediente de {{ patient['name'] }} | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-head">
+        <h2>Expediente completo</h2>
+        <a class="btn-primary" href="{{ url_for('edit_patient', patient_id=patient['id']) }}">Editar informacion</a>
+    </div>
+
+    <div class="detail-grid">
+        <article>
+            <h3>Datos generales</h3>
+            <p><strong>ID:</strong> {{ patient['id'] }}</p>
+            <p><strong>Nombre:</strong> {{ patient['name'] }}</p>
+            <p><strong>Edad:</strong> {{ patient['age'] }}</p>
+            <p><strong>Fecha de consulta:</strong> {{ patient['consultation_date'] }}</p>
+        </article>
+
+        <article>
+            <h3>Informacion clinica</h3>
+            <p><strong>Diagnostico:</strong> {{ patient['diagnosis'] }}</p>
+            <p><strong>Tratamiento:</strong> {{ patient['treatment'] }}</p>
+            <p><strong>Notas medicas:</strong></p>
+            <p>{{ patient['medical_notes'] }}</p>
+        </article>
+    </div>
+</section>
+{% endblock %}

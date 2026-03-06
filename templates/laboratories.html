@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}Laboratorios | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2>Solicitud de analisis de laboratorio</h2>
+    <p>Analisis de laboratorio completo por secciones, similar al formato de captura.</p>
+
+    <form method="post" class="patient-form lab-sheet-form">
+        <input type="hidden" name="action" value="save_lab">
+
+        <div class="lab-sheet-header">
+            <div>
+                <label for="patient_id">Paciente</label>
+                <select id="patient_id" name="patient_id" required>
+                    <option value="">Seleccionar paciente</option>
+                    {% for patient in patients %}
+                        <option value="{{ patient['id'] }}" {% if request.form.get('patient_id') == (patient['id']|string) %}selected{% endif %}>{{ patient['name'] }} (ID {{ patient['id'] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="lab_date">Fecha del laboratorio</label>
+                <input id="lab_date" name="lab_date" type="date" value="{{ request.form.get('lab_date', '') }}" required>
+            </div>
+        </div>
+
+        <div class="lab-sheet-checks">
+            <div class="lab-sheet-title">
+                <h3>Analisis de Laboratorio Completo</h3>
+                <p>Completa solo los parametros disponibles para este paciente.</p>
+            </div>
+            <div class="lab-section-grid">
+                {% for section in lab_panel_sections %}
+                    <article class="lab-group-card">
+                        <h4>{{ section['title'] }}</h4>
+                        <div class="lab-field-list">
+                            {% for field in section['fields'] %}
+                                <label for="lab_{{ field['id'] }}">
+                                    {{ field['name'] }} ({{ field['unit'] }})
+                                    <small>N: {{ field['reference'] }}</small>
+                                </label>
+                                <input
+                                    id="lab_{{ field['id'] }}"
+                                    name="lab_{{ field['id'] }}"
+                                    type="text"
+                                    value="{{ request.form.get('lab_' ~ field['id'], '') }}"
+                                    placeholder="{{ field['placeholder'] }}"
+                                >
+                            {% endfor %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="lab-sheet-meta">
+            <div>
+                <label for="custom_test_name">Otro analisis (opcional)</label>
+                <input id="custom_test_name" name="custom_test_name" type="text" value="{{ request.form.get('custom_test_name', '') }}" placeholder="Nombre del analisis adicional">
+            </div>
+
+            <div>
+                <label for="custom_result_value">Resultado de otro analisis</label>
+                <input id="custom_result_value" name="custom_result_value" type="text" value="{{ request.form.get('custom_result_value', '') }}" placeholder="Ej: positivo / 15.2">
+            </div>
+
+            <div>
+                <label for="custom_units">Unidades (opcional)</label>
+                <input id="custom_units" name="custom_units" type="text" value="{{ request.form.get('custom_units', '') }}" placeholder="mg/dL">
+            </div>
+
+            <div>
+                <label for="custom_reference_range">Rango de referencia (opcional)</label>
+                <input id="custom_reference_range" name="custom_reference_range" type="text" value="{{ request.form.get('custom_reference_range', '') }}" placeholder="10-20">
+            </div>
+        </div>
+
+        <div>
+            <label for="interpretation_notes">Notas clinicas del laboratorio</label>
+            <textarea id="interpretation_notes" name="interpretation_notes" rows="3" placeholder="Observaciones adicionales">{{ request.form.get('interpretation_notes', '') }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Guardar analisis</button>
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Chat IA de laboratorio</h2>
+    <p>Analiza en conjunto el panel de laboratorio del paciente (todos los resultados de la fecha mas reciente).</p>
+    {% if lab_llm_status %}
+        <p><strong>Estado IA:</strong> {{ lab_llm_status }}</p>
+    {% endif %}
+
+    <form method="post" class="patient-form">
+        <input type="hidden" name="action" value="lab_chat">
+
+        <label for="lab_patient_id">Paciente a consultar</label>
+        <select id="lab_patient_id" name="lab_patient_id" required>
+            <option value="">Seleccionar paciente</option>
+            {% for patient in patients %}
+                <option value="{{ patient['id'] }}" {% if selected_lab_patient_id == (patient['id']|string) %}selected{% endif %}>
+                    {{ patient['name'] }} (ID {{ patient['id'] }})
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="lab_chat_message">Consulta clinica (opcional)</label>
+        <textarea id="lab_chat_message" name="lab_chat_message" rows="3" placeholder="Ej. Resume alteraciones principales y riesgo orientativo del panel completo"></textarea>
+
+        <button type="submit" class="btn-primary">Analizar con IA</button>
+    </form>
+
+    <form method="post" class="chat-clear-form">
+        <input type="hidden" name="action" value="clear_lab_chat">
+        <button type="submit">Limpiar chat laboratorio</button>
+    </form>
+
+    <div class="chat-box" id="lab-chat-box">
+        {% if lab_chat_history %}
+            {% for item in lab_chat_history %}
+                <article class="chat-message {{ item['role'] }}">
+                    <strong>{{ 'Medico' if item['role'] == 'user' else 'Asistente IA Lab' }}</strong>
+                    <p>{{ item['content'] }}</p>
+                </article>
+            {% endfor %}
+        {% else %}
+            <article class="chat-message assistant">
+                <strong>Asistente IA Lab</strong>
+                <p>Selecciona solo el paciente y recibiras un analisis integral del panel de laboratorio mas reciente.</p>
+            </article>
+        {% endif %}
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Analisis registrados</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>Estudio</th>
+                    <th>Resultado</th>
+                    <th>Rango</th>
+                    <th>Notas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in lab_rows %}
+                    <tr>
+                        <td>{{ row['lab_date'] }}</td>
+                        <td>{{ row['patient_name'] }}</td>
+                        <td>{{ row['test_name'] }}</td>
+                        <td>{{ row['result_value'] }} {{ row['units'] or '' }}</td>
+                        <td>{{ row['reference_range'] or 'No informado' }}</td>
+                        <td>{{ row['interpretation_notes'] or '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty">No hay analisis registrados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

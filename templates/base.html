@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DOCUMED BY HVIRFILL{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <header class="topbar">
+        <div class="brand">
+            <img src="{{ url_for('static', filename='img/hvrfill-logo.jpg') }}" alt="Logo DOCUMED" class="brand-logo">
+            <h1>DOCUMED <span class="brand-by">BY HVIRFILL</span></h1>
+            <p>Expediente medico digital inteligente</p>
+        </div>
+        <nav class="nav-actions">
+            <a href="{{ url_for('index') }}">Inicio</a>
+            <a href="{{ url_for('list_patients') }}">Ver pacientes</a>
+            <a href="{{ url_for('register_patient') }}">Registrar paciente</a>
+            <a href="{{ url_for('laboratories') }}">Laboratorios</a>
+            <a href="{{ url_for('prescriptions') }}">Recetas</a>
+            <a href="{{ url_for('history') }}">Historial medico</a>
+            <a href="{{ url_for('ai_panel') }}">Panel IA</a>
+        </nav>
+    </header>
+
+    <main class="page">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <article class="flash-message {{ category }}">{{ message }}</article>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

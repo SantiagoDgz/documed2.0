@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Editar paciente | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+    <h2>Editar paciente</h2>
+
+    <form method="post" class="patient-form" id="patient-form">
+        <label for="name">Nombre del paciente</label>
+        <input id="name" name="name" type="text" required value="{{ form_data.get('name', patient['name']) }}">
+
+        <label for="age">Edad</label>
+        <input id="age" name="age" type="number" min="0" max="120" required value="{{ form_data.get('age', patient['age']) }}">
+
+        <label for="diagnosis">Diagnostico</label>
+        <input id="diagnosis" name="diagnosis" type="text" required value="{{ form_data.get('diagnosis', patient['diagnosis']) }}">
+
+        <label for="treatment">Tratamiento</label>
+        <textarea id="treatment" name="treatment" rows="3" required>{{ form_data.get('treatment', patient['treatment']) }}</textarea>
+
+        <label for="medical_notes">Notas medicas</label>
+        <textarea id="medical_notes" name="medical_notes" rows="5" required>{{ form_data.get('medical_notes', patient['medical_notes']) }}</textarea>
+
+        <label for="consultation_date">Fecha de consulta</label>
+        <input id="consultation_date" name="consultation_date" type="date" required value="{{ form_data.get('consultation_date', patient['consultation_date']) }}">
+
+        <button type="submit" class="btn-primary">Guardar cambios</button>
+    </form>
+</section>
+{% endblock %}

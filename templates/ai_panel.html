@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Panel IA | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2>Panel de inteligencia artificial</h2>
+    <p>
+        Analisis automatizado para apoyar decisiones clinicas: resumen de notas,
+        deteccion de riesgo y recordatorios de seguimiento.
+    </p>
+    <p><strong>Modo de riesgo:</strong> Combinado (diagnostico + contexto clinico).</p>
+    <p><strong>Catalogo de enfermedades cargado:</strong> {{ disease_catalog_count }} entradas.</p>
+
+    {% if has_grok_api_key %}
+        <p><strong>Estado API Grok:</strong> Configurada correctamente.</p>
+    {% else %}
+        <p><strong>Estado API Grok:</strong> No configurada. Agrega `GROK_API_KEY` en tu archivo `.env`.</p>
+    {% endif %}
+    <p><strong>Proveedor detectado:</strong> {{ llm_provider }}</p>
+    {% if llm_runtime_status %}
+        <p><strong>Estado de respuesta IA:</strong> {{ llm_runtime_status }}</p>
+    {% endif %}
+
+    <div class="ai-actions">
+        <form method="post">
+            <input type="hidden" name="action" value="reanalyze">
+            <button type="submit" class="btn-primary">Reanalizar con IA</button>
+        </form>
+        {% if used_grok %}
+            <p>
+                Reanalisis completado. Nuevos: {{ generated_with_grok }} |
+                Cache: {{ cache_hits }} |
+                Fallback local: {{ local_fallbacks }}
+            </p>
+        {% else %}
+            <p>Resumenes locales mostrados para ahorrar consumo de API.</p>
+        {% endif %}
+    </div>
+
+    <div class="ai-grid">
+        {% for item in insights %}
+            <article class="ai-card risk-{{ item['risk']|lower }}">
+                <header>
+                    <h3>{{ item['name'] }}</h3>
+                    <span>Riesgo: {{ item['risk'] }}</span>
+                </header>
+                <p><strong>Riesgo {{ item['risk'] }} por:</strong> {{ item['risk_reason_short'] }}</p>
+                <p><strong>Resumen:</strong> {{ item['summary'] }}</p>
+                <p><strong>Origen:</strong> {{ item['summary_source'] }}</p>
+                <p><strong>Recordatorio:</strong> {{ item['reminder'] }}</p>
+                <a href="{{ url_for('patient_detail', patient_id=item['id']) }}">Abrir expediente</a>
+            </article>
+        {% else %}
+            <p>No hay datos para analizar todavia.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Chat IA Clinico (solo personal medico)</h2>
+    <p>
+        Este chat solo ofrece apoyo orientativo: sugerencias y nivel de riesgo.
+        No emite diagnosticos definitivos ni recetas.
+    </p>
+    {% if not has_grok_api_key %}
+        <p><strong>Modo actual:</strong> Analisis local (sin Grok API key).</p>
+    {% endif %}
+
+    <div class="chat-box" id="chat-box">
+        {% if chat_history %}
+            {% for item in chat_history %}
+                <article class="chat-message {{ item['role'] }}">
+                    <strong>{{ 'Medico' if item['role'] == 'user' else 'Asistente IA' }}</strong>
+                    <p>{{ item['content'] }}</p>
+                </article>
+            {% endfor %}
+        {% else %}
+            <article class="chat-message assistant">
+                <strong>Asistente IA</strong>
+                <p>
+                    Listo para ayudarte con dudas clinicas generales, estratificacion de riesgo y
+                    recomendaciones de seguimiento. No realizo diagnostico ni prescripcion.
+                </p>
+            </article>
+        {% endif %}
+    </div>
+
+    <form method="post" class="chat-form">
+        <input type="hidden" name="action" value="chat">
+
+        <label for="chat_patient_id">Paciente (opcional para contexto clinico)</label>
+        <select id="chat_patient_id" name="chat_patient_id">
+            <option value="">Sin paciente seleccionado</option>
+            {% for patient in patients %}
+                <option value="{{ patient['id'] }}" {% if selected_patient_id == (patient['id']|string) %}selected{% endif %}>
+                    {{ patient['name'] }} (ID {{ patient['id'] }})
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="chat_message">Pregunta clinica</label>
+        <textarea
+            id="chat_message"
+            name="chat_message"
+            rows="4"
+            maxlength="1500"
+            placeholder="Ejemplo: Que seguimiento sugerido recomiendas para este paciente considerando su riesgo actual?"
+            required
+        ></textarea>
+
+        <div class="chat-actions">
+            <button type="submit" class="btn-primary">Enviar</button>
+        </div>
+    </form>
+
+    <form method="post" class="chat-clear-form">
+        <input type="hidden" name="action" value="clear_chat">
+        <button type="submit">Limpiar chat</button>
+    </form>
+
+    {% if last_chat_references %}
+        <div class="chat-refs">
+            <h3>Referencias usadas en la ultima respuesta</h3>
+            <ul>
+                {% for ref in last_chat_references %}
+                    <li>
+                        <strong>{{ ref['title'] }}</strong>
+                        <small>{{ ref['source'] }} | Coincidencias: {{ ref['matched_terms']|join(', ') }}</small>
+                        <p>{{ ref['snippet'] }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Panel principal | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <h2>Panel de control clinico</h2>
+        <p>
+            Gestiona expedientes medicos, registra consultas y obtien sugerencias inteligentes
+            para mejorar el seguimiento de pacientes.
+        </p>
+    </div>
+    <div class="stat-card">
+        <span>Total de pacientes</span>
+        <strong>{{ total_patients }}</strong>
+    </div>
+</section>
+
+<section class="card-grid">
+    <a class="card-link" href="{{ url_for('list_patients') }}">
+        <h3>Ver pacientes</h3>
+        <p>Consulta todos los registros activos y su ultima visita.</p>
+    </a>
+    <a class="card-link" href="{{ url_for('register_patient') }}">
+        <h3>Registrar paciente</h3>
+        <p>Ingresa un nuevo expediente clinico en segundos.</p>
+    </a>
+    <a class="card-link" href="{{ url_for('history') }}">
+        <h3>Ver historial medico</h3>
+        <p>Revisa consultas anteriores y cambios en tratamientos.</p>
+    </a>
+    <a class="card-link" href="{{ url_for('ai_panel') }}">
+        <h3>Panel de inteligencia artificial</h3>
+        <p>Resumen de notas, deteccion de riesgo y recordatorios.</p>
+    </a>
+</section>
+
+<section class="panel">
+    <h3>Pacientes recientes</h3>
+    {% if recent_patients %}
+        <ul class="recent-list">
+            {% for patient in recent_patients %}
+                <li>
+                    <span>{{ patient['consultation_date'] }}</span>
+                    <div>
+                        <strong>{{ patient['name'] }}</strong>
+                        <small>{{ patient['diagnosis'] }}</small>
+                    </div>
+                    <a href="{{ url_for('patient_detail', patient_id=patient['id']) }}">Ver expediente</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay pacientes registrados todavia.</p>
+    {% endif %}
+</section>
+{% endblock %}

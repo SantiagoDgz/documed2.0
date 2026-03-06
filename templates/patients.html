@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Pacientes | DocuMed 2.0{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-head">
+        <h2>Lista de pacientes</h2>
+        <input type="search" id="patient-filter" placeholder="Filtrar por nombre o diagnostico...">
+    </div>
+
+    <div class="table-wrap">
+        <table id="patients-table">
+            <thead>
+                <tr>
+                    <th data-sort="name">Nombre</th>
+                    <th data-sort="age">Edad</th>
+                    <th data-sort="diagnosis">Diagnostico</th>
+                    <th data-sort="consultation_date">Ultima consulta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                    <tr>
+                        <td data-key="name">{{ patient['name'] }}</td>
+                        <td data-key="age">{{ patient['age'] }}</td>
+                        <td data-key="diagnosis">{{ patient['diagnosis'] }}</td>
+                        <td data-key="consultation_date">{{ patient['consultation_date'] }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('patient_detail', patient_id=patient['id']) }}">Ver</a>
+                            <a href="{{ url_for('edit_patient', patient_id=patient['id']) }}">Editar</a>
+                            <form method="post" action="{{ url_for('delete_patient', patient_id=patient['id']) }}" class="inline-form delete-form">
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="empty">No hay pacientes registrados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

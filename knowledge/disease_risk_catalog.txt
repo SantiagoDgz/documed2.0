@@ -1,0 +1,179 @@
+# Formato: termino|nivel(alto/medio/bajo)|nota
+# Infectologia y sepsis
+sepsis|alto|Sospecha de disfuncion organica por infeccion
+shock septico|alto|Inestabilidad hemodinamica con infeccion
+meningitis bacteriana|alto|Compromiso neurologico agudo
+encefalitis|alto|Riesgo neurologico alto
+neumonia grave|alto|Compromiso respiratorio potencial
+neumonia|medio|Seguimiento clinico y signos de alarma
+tuberculosis activa|medio|Control clinico y aislamiento segun protocolo
+hepatitis fulminante|alto|Falla hepatica aguda
+hepatitis cronica|medio|Seguimiento de funcion hepatica
+vih avanzado|alto|Inmunosupresion significativa
+inmunosupresion|medio|Mayor riesgo de complicaciones infecciosas
+
+# Cardiovascular
+infarto agudo de miocardio|alto|Evento coronario agudo
+sindrome coronario agudo|alto|Prioridad alta
+angina inestable|alto|Riesgo de evento mayor
+insuficiencia cardiaca descompensada|alto|Riesgo hemodinamico
+insuficiencia cardiaca|medio|Seguimiento cercano
+arritmia inestable|alto|Riesgo de compromiso hemodinamico
+fibrilacion auricular|medio|Riesgo tromboembolico
+hipertension arterial sistemica|medio|Factor de riesgo cardiovascular
+hipertension maligna|alto|Emergencia hipertensiva potencial
+aneurisma aortico roto|alto|Riesgo vital
+aneurisma|alto|Evaluar ruptura/complicacion
+embolia pulmonar|alto|Compromiso respiratorio-hemodinamico
+trombosis venosa profunda|medio|Riesgo tromboembolico
+
+# Neurologia
+acv isquemico|alto|Evento neurologico agudo
+acv hemorragico|alto|Emergencia neurologica
+ictus|alto|Evento neurologico agudo
+evento vascular cerebral|alto|Prioridad alta
+status epilepticus|alto|Emergencia neurologica
+epilepsia refractaria|medio|Mayor complejidad de manejo
+hemorragia subaracnoidea|alto|Riesgo neurologico alto
+traumatismo craneoencefalico grave|alto|Compromiso neurologico
+
+# Respiratorio
+insuficiencia respiratoria aguda|alto|Riesgo de ventilacion asistida
+insuficiencia respiratoria|alto|Compromiso respiratorio
+epoc exacerbado|alto|Riesgo de descompensacion
+epoc|medio|Control funcional respiratorio
+asma severa|alto|Riesgo de crisis grave
+asma|medio|Seguimiento de control
+sdra|alto|Sindrome de distrés respiratorio agudo
+fibrosis pulmonar avanzada|alto|Compromiso funcional importante
+
+# Nefrologia y metabolico
+falla renal aguda|alto|Riesgo metabolico/hemodinamico
+enfermedad renal cronica estadio 5|alto|Alto riesgo de complicaciones
+enfermedad renal cronica|medio|Seguimiento nefrologico
+cetoacidosis diabetica|alto|Descompensacion metabolica
+estado hiperosmolar|alto|Emergencia metabolica
+diabetes mellitus|medio|Control metabolico continuo
+hipoglucemia severa|alto|Riesgo neurologico
+hipercalemia severa|alto|Riesgo arritmico
+
+# Gastro-hepatico
+hemorragia digestiva alta|alto|Riesgo hemodinamico
+hemorragia digestiva|alto|Sangrado significativo
+pancreatitis aguda grave|alto|Riesgo sistemico
+pancreatitis cronica|medio|Seguimiento clinico
+cirrosis descompensada|alto|Riesgo de falla hepatica
+cirrosis hepatica|medio|Seguimiento y deteccion de complicaciones
+peritonitis bacteriana espontanea|alto|Complicacion grave en cirrosis
+obstruccion intestinal complicada|alto|Riesgo quirurgico
+
+# Oncologia y hematologia
+cancer metastasico|alto|Enfermedad avanzada
+neoplasia maligna|alto|Riesgo oncologico alto
+carcinoma hepatocelular|alto|Oncologia hepatica
+leucemia aguda|alto|Compromiso hematologico grave
+linfoma agresivo|alto|Riesgo alto
+mieloma multiple avanzado|alto|Complicaciones multiorganicas
+cancer de mama|medio|Seguimiento oncologico segun estadio
+cancer de pulmon|alto|Alta carga de riesgo segun estadio
+cancer colorrectal|medio|Riesgo variable segun estadio
+
+# Obstetricia
+preeclampsia severa|alto|Complicacion obstetrica mayor
+eclampsia|alto|Emergencia obstetrica
+hemorragia obstetrica|alto|Riesgo vital
+embarazo ectopico roto|alto|Emergencia quirurgica
+embarazo de alto riesgo|medio|Seguimiento estrecho
+
+# Psiquiatria (riesgo clinico)
+riesgo suicida alto|alto|Intervencion inmediata
+intento suicida reciente|alto|Prioridad alta de seguridad
+psicosis aguda con riesgo|alto|Riesgo para paciente/terceros
+trastorno depresivo mayor|medio|Seguimiento clinico cercano
+
+# Reumatologia/autoinmune
+lupus con compromiso renal|alto|Afectacion organica mayor
+vasculitis sistemica activa|alto|Riesgo multiorganico
+artritis reumatoide activa|medio|Seguimiento inflamatorio y funcional
+
+# Endocrino y otros
+tormenta tiroidea|alto|Emergencia endocrina
+coma mixedematoso|alto|Riesgo vital
+obesidad morbida con apnea|medio|Riesgo cardiometabolico
+desnutricion severa|medio|Mayor vulnerabilidad clinica
+
+# Terminos generales graves
+estado terminal|alto|Enfermedad avanzada
+pronostico reservado|alto|Alerta de gravedad
+enfermedad mortal|alto|Riesgo alto por descripcion clinica
+riesgo vital|alto|Compromiso mayor
+falla multiorganica|alto|Riesgo vital
+coma|alto|Compromiso neurologico severo
+
+# Oncologia ampliada
+adenocarcinoma|alto|Neoplasia maligna
+carcinoma epidermoide|alto|Neoplasia maligna
+carcinoma escamocelular|alto|Neoplasia maligna
+glioma de alto grado|alto|Tumor cerebral agresivo
+tumor cerebral maligno|alto|Riesgo neurologico-oncologico
+melanoma metastasico|alto|Riesgo de progresion sistemica
+mesotelioma|alto|Neoplasia de mal pronostico
+
+# Infecciones graves ampliadas
+endocarditis infecciosa|alto|Riesgo de complicaciones graves
+fascitis necrotizante|alto|Infeccion de progresion rapida
+absceso cerebral|alto|Compromiso neurologico grave
+neumonia nosocomial grave|alto|Mayor mortalidad intrahospitalaria
+dengue grave|alto|Riesgo hemorragico y shock
+malaria grave|alto|Compromiso multiorganico
+
+# Urgencias cardio-neuro adicionales
+paro cardiorrespiratorio|alto|Riesgo vital inmediato
+taponamiento cardiaco|alto|Compromiso hemodinamico
+diseccion aortica|alto|Emergencia vascular
+miocarditis fulminante|alto|Riesgo de choque cardiogenico
+edema agudo de pulmon|alto|Urgencia respiratoria
+accidente isquemico transitorio recurrente|medio|Riesgo de evento cerebrovascular
+
+# Respiratorio ampliado
+neumotorax a tension|alto|Compromiso ventilatorio agudo
+neumotorax espontaneo complicado|alto|Riesgo respiratorio
+tromboembolismo pulmonar|alto|Riesgo hemodinamico y respiratorio
+bronquiectasias severas|medio|Riesgo de exacerbaciones frecuentes
+
+# Nefro-metabolico ampliado
+sindrome uremico hemolitico|alto|Compromiso renal y hematologico
+acidosis metabolica severa|alto|Inestabilidad metabolica
+insuficiencia renal terminal|alto|Complicaciones de alto riesgo
+
+# Hepato-gastro ampliado
+colangitis aguda|alto|Riesgo de sepsis biliar
+isquemia mesenterica|alto|Emergencia abdominal
+perforacion intestinal|alto|Riesgo septico y quirurgico
+hepatocarcinoma|alto|Neoplasia hepatica maligna
+
+# Hematologia ampliada
+coagulacion intravascular diseminada|alto|Riesgo hemorragico/trombotico
+anemia hemolitica severa|medio|Riesgo de descompensacion
+trombocitopenia severa|alto|Riesgo hemorragico
+neutropenia febril|alto|Riesgo de infeccion grave
+
+# Autoinmune/reuma ampliado
+esclerosis sistemica con compromiso pulmonar|alto|Afectacion organica mayor
+miastenia gravis en crisis|alto|Riesgo respiratorio
+dermatomiositis con compromiso intersticial|alto|Riesgo pulmonar
+
+# Obstetricia ampliada
+sindrome hellp|alto|Complicacion obstetrica grave
+desprendimiento prematuro de placenta|alto|Riesgo materno-fetal
+placenta previa sangrante|alto|Hemorragia obstetrica
+
+# Pediatria/infeccioso adicional
+bronquiolitis grave|alto|Compromiso respiratorio pediatrico
+sepsis neonatal|alto|Riesgo vital neonatal
+
+# Enfermedades cronicas relevantes (riesgo medio base)
+enfermedad pulmonar obstructiva cronica|medio|Riesgo de exacerbaciones
+cardiopatia isquemica cronica|medio|Riesgo cardiovascular persistente
+demencia avanzada|medio|Alta fragilidad clinica
+enfermedad de parkinson avanzada|medio|Deterioro funcional progresivo
