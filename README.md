@@ -214,7 +214,44 @@ python app.py
 http://127.0.0.1:5000
 ```
 
-## 10) Objetivo del sistema
+## 10) Despliegue en Render (produccion)
+
+Este proyecto incluye configuracion para Render en `render.yaml`.
+
+### Opcion A: despliegue automatico con `render.yaml`
+
+1. Sube cambios a GitHub.
+2. En Render, crea un nuevo servicio web conectado a este repositorio.
+3. Render detectara `render.yaml` y configurara:
+- Build: `pip install -r requirements.txt`
+- Start: `gunicorn app:app`
+
+4. En variables de entorno de Render configura al menos:
+
+```text
+GROK_API_KEY=tu_api_key_real
+```
+
+`SECRET_KEY` se genera automaticamente por `render.yaml`.
+
+### Opcion B: configuracion manual en Render
+
+- Runtime: Python
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Variables:
+- `SECRET_KEY`: valor seguro
+- `GROK_API_KEY`: tu clave
+- `GROK_MODEL`: `grok-3-mini` (opcional)
+- `GROK_PROVIDER`: `auto` (opcional)
+
+### Notas importantes de datos
+
+- En este proyecto se usa SQLite local (`database/patients.db`).
+- En hosting tipo Render (disco efimero), la data puede perderse al redeploy/restart.
+- Para persistencia real en produccion, migra a PostgreSQL administrado.
+
+## 11) Objetivo del sistema
 
 DocuMed 2.0 busca:
 

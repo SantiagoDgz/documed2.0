@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: documed-by-hvirfill
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GROK_API_KEY
+        sync: false
+      - key: GROK_MODEL
+        value: grok-3-mini
+      - key: GROK_PROVIDER
+        value: auto

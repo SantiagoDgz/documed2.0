@@ -223,7 +223,7 @@ disease_catalog_cache: dict[str, Any] = {
 load_dotenv(BASE_DIR / ".env")
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "documed-dev-key"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "documed-dev-key")
 app.config["DATABASE"] = str(DATABASE_PATH)
 app.config["GROK_API_KEY"] = os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY", "")
 app.config["GROK_MODEL"] = os.getenv("GROK_MODEL", "grok-3-mini")
@@ -1958,6 +1958,13 @@ def ai_panel() -> str:
     )
 
 
+# Ensure tables exist in production (gunicorn/import execution) and local runs.
+init_db()
+
+
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "5000")),
+        debug=os.getenv("FLASK_DEBUG", "0") == "1",
+    )
