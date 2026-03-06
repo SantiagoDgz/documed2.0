@@ -11,6 +11,6 @@ services:
       - key: GROK_API_KEY
         sync: false
       - key: GROK_MODEL
-        value: grok-3-mini
+        value: ""
       - key: GROK_PROVIDER
         value: auto

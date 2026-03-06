@@ -226,7 +226,8 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "documed-dev-key")
 app.config["DATABASE"] = str(DATABASE_PATH)
 app.config["GROK_API_KEY"] = os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY", "")
-app.config["GROK_MODEL"] = os.getenv("GROK_MODEL", "grok-3-mini")
+# Keep model empty by default so provider-specific candidates are selected automatically.
+app.config["GROK_MODEL"] = os.getenv("GROK_MODEL", "")
 app.config["GROK_PROVIDER"] = os.getenv("GROK_PROVIDER", "auto")
 
 
