@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="panel">
-    <h2>Panel annIA (potenciada por Grok)</h2>
+    <h2>Panel annIA (potenciada por GroQ)</h2>
     <p>
         Análisis automatizado para apoyar decisiones clínicas: resumen de notas,
         detección de riesgo y recordatorios de seguimiento.
@@ -11,10 +11,10 @@
     <p><strong>Modo de riesgo:</strong> Combinado (diagnóstico + contexto clínico).</p>
     <p><strong>Catálogo de enfermedades cargado:</strong> {{ disease_catalog_count }} entradas.</p>
 
-    {% if has_grok_api_key %}
-        <p><strong>Estado annIA/Grok:</strong> Configurada correctamente.</p>
+    {% if has_groq_api_key %}
+        <p><strong>Estado annIA/GroQ:</strong> Configurada correctamente.</p>
     {% else %}
-        <p><strong>Estado annIA/Grok:</strong> No configurada. Agrega `GROK_API_KEY` en tu archivo `.env`.</p>
+        <p><strong>Estado annIA/GroQ:</strong> No configurada. Agrega `GROQ_API_KEY` en tu archivo `.env`.</p>
     {% endif %}
     <p><strong>Proveedor detectado:</strong> {{ llm_provider }}</p>
     {% if llm_runtime_status %}
@@ -62,8 +62,8 @@
         Este chat solo ofrece apoyo orientativo: sugerencias y nivel de riesgo.
         No emite diagnósticos definitivos ni recetas.
     </p>
-    {% if not has_grok_api_key %}
-        <p><strong>Modo actual:</strong> Análisis local (sin Grok API key).</p>
+    {% if not has_groq_api_key %}
+        <p><strong>Modo actual:</strong> Análisis local (sin GroQ API key).</p>
     {% endif %}
 
     <div class="chat-box" id="chat-box">
@@ -76,7 +76,7 @@
             {% endfor %}
         {% else %}
             <article class="chat-message assistant">
-                <strong>annIA (potenciada por Grok)</strong>
+                <strong>annIA (potenciada por Groq)</strong>
                 <p>
                     Listo para ayudarte con dudas clínicas generales, estratificación de riesgo y
                     recomendaciones de seguimiento. No realizo diagnóstico ni prescripción.
