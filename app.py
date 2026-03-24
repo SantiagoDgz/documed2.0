@@ -225,9 +225,9 @@ load_dotenv(BASE_DIR / ".env")
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "documed-dev-key")
 app.config["DATABASE"] = str(DATABASE_PATH)
-app.config["GROK_API_KEY"] = os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY", "")
-app.config["GROK_MODEL"] = os.getenv("GROK_MODEL", "")
-app.config["GROK_PROVIDER"] = os.getenv("GROK_PROVIDER", "auto")
+app.config["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY") or os.getenv("XAI_API_KEY", "")
+app.config["GROQ_MODEL"] = os.getenv("GROQ_MODEL", "")
+app.config["GROQ_PROVIDER"] = os.getenv("GROQ_PROVIDER", "auto")
 
 
 def get_db() -> sqlite3.Connection:
