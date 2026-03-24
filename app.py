@@ -303,6 +303,21 @@ def init_db() -> None:
         """
     )
 
+    db.execute(
+        """
+        CREATE TABLE IF NOT EXISTS health_trends (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_id INTEGER NOT NULL,
+            metric_type TEXT NOT NULL,
+            value REAL NOT NULL,
+            unit TEXT NOT NULL,
+            measurement_date TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (patient_id) REFERENCES patients(id)
+        )
+        """
+    )
+
     # Lightweight migration for existing databases created before cache columns.
     columns = {
         row[1]
@@ -1596,7 +1611,38 @@ def history() -> str:
         ORDER BY consultation_date DESC, updated_at DESC
         """
     ).fetchall()
-    return render_template("history.html", history_rows=history_rows)
+    
+    # Get health trends for each patient
+    patient_trends = {}
+    for patient in history_rows:
+        trends = db.execute(
+            """
+            SELECT metric_type, value, unit, measurement_date
+            FROM health_trends
+            WHERE patient_id = ?
+            ORDER BY measurement_date DESC
+            LIMIT 10
+            """,
+            (patient["id"],)
+        ).fetchall()
+        
+        if trends:
+            patient_trends[patient["id"]] = {
+                "count": len(trends),
+                "last_date": trends[0]["measurement_date"] if trends else None,
+                "metrics": {}
+            }
+            for trend in trends:
+                metric = trend["metric_type"]
+                if metric not in patient_trends[patient["id"]]["metrics"]:
+                    patient_trends[patient["id"]]["metrics"][metric] = []
+                patient_trends[patient["id"]]["metrics"][metric].append({
+                    "value": trend["value"],
+                    "unit": trend["unit"],
+                    "date": trend["measurement_date"]
+                })
+    
+    return render_template("history.html", history_rows=history_rows, patient_trends=patient_trends)
 
 
 @app.route("/laboratories", methods=["GET", "POST"])
@@ -1972,6 +2018,148 @@ def ai_panel() -> str:
         last_chat_references=last_chat_references,
         selected_patient_id=selected_patient_id,
     )
+
+
+@app.route("/analytics")
+def analytics():
+    """Mostrar análisis de optimización con funciones lineales."""
+    return render_template("analytics.html")
+
+
+@app.route("/health-trends", methods=["GET", "POST"])
+def health_trends():
+    """Mostrar tendencias de salud con análisis de derivadas."""
+    db = get_db()
+    patients = db.execute("SELECT id, name FROM patients ORDER BY name").fetchall()
+    
+    selected_patient_id = ""
+    patient_trends = {"glucosa": [], "presion_arterial": []}
+    
+    if request.method == "POST":
+        action = request.form.get("action")
+        selected_patient_id = request.form.get("patient_id", "")
+        
+        if action == "save_trend":
+            patient_id = request.form.get("patient_id")
+            metric_type = request.form.get("metric_type")
+            value = request.form.get("value")
+            unit = request.form.get("unit")
+            measurement_date = request.form.get("measurement_date")
+            
+            if patient_id and metric_type and value and unit and measurement_date:
+                try:
+                    db.execute(
+                        """
+                        INSERT INTO health_trends 
+                        (patient_id, metric_type, value, unit, measurement_date, created_at)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """,
+                        (int(patient_id), metric_type, float(value), unit, measurement_date, 
+                         datetime.now().isoformat(timespec="seconds"))
+                    )
+                    db.commit()
+                    flash(f"Registro de {metric_type} guardado correctamente.", "success")
+                except Exception as e:
+                    flash(f"Error al guardar: {str(e)}", "error")
+        
+        elif action == "load_patient" and selected_patient_id.isdigit():
+            patient_trends_rows = db.execute(
+                """
+                SELECT metric_type, value, unit, measurement_date
+                FROM health_trends
+                WHERE patient_id = ?
+                ORDER BY measurement_date DESC
+                LIMIT 50
+                """,
+                (int(selected_patient_id),)
+            ).fetchall()
+            
+            for row in patient_trends_rows:
+                metric = row["metric_type"]
+                if metric not in patient_trends:
+                    patient_trends[metric] = []
+                patient_trends[metric].append({
+                    "value": row["value"],
+                    "unit": row["unit"],
+                    "fecha": row["measurement_date"]
+                })
+    
+    return render_template(
+        "health_trends.html", 
+        patients=patients, 
+        selected_patient_id=selected_patient_id,
+        patient_trends=patient_trends
+    )
+
+
+@app.route("/api/health-trends/save", methods=["POST"])
+def save_health_trend():
+    """API para guardar tendencias de salud (AJAX)."""
+    db = get_db()
+    data = request.get_json()
+    
+    try:
+        patient_id = data.get("patient_id")
+        metric_type = data.get("metric_type")
+        value = data.get("value")
+        unit = data.get("unit")
+        measurement_date = data.get("measurement_date")
+        
+        if not all([patient_id, metric_type, value, unit, measurement_date]):
+            return {"success": False, "error": "Campos incompletos"}, 400
+        
+        # Verificar que el paciente existe
+        patient = db.execute("SELECT id FROM patients WHERE id = ?", (int(patient_id),)).fetchone()
+        if not patient:
+            return {"success": False, "error": "Paciente no encontrado"}, 404
+        
+        db.execute(
+            """
+            INSERT INTO health_trends 
+            (patient_id, metric_type, value, unit, measurement_date, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (int(patient_id), metric_type, float(value), unit, measurement_date,
+             datetime.now().isoformat(timespec="seconds"))
+        )
+        db.commit()
+        
+        return {"success": True, "message": "Datos guardados correctamente"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}, 500
+
+
+@app.route("/api/health-trends/<int:patient_id>", methods=["GET"])
+def get_health_trends(patient_id: int):
+    """API para obtener tendencias de salud de un paciente."""
+    db = get_db()
+    
+    try:
+        trends = db.execute(
+            """
+            SELECT metric_type, value, unit, measurement_date
+            FROM health_trends
+            WHERE patient_id = ?
+            ORDER BY measurement_date DESC
+            LIMIT 50
+            """,
+            (patient_id,)
+        ).fetchall()
+        
+        result = {}
+        for row in trends:
+            metric = row["metric_type"]
+            if metric not in result:
+                result[metric] = []
+            result[metric].append({
+                "value": row["value"],
+                "unit": row["unit"],
+                "fecha": row["measurement_date"]
+            })
+        
+        return {"success": True, "data": result}
+    except Exception as e:
+        return {"success": False, "error": str(e)}, 500
 
 
 # Ensure tables exist in production (gunicorn/import execution) and local runs.

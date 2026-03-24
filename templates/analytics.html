@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block title %}Análisis de Optimización - DOCUMED BY HVIRFILL{% endblock %}
+
+{% block content %}
+<div class="analytics-page">
+    <section class="analytics-header">
+        <h2>Análisis de Optimización con IA</h2>
+        <p>Comparación de tiempo de procesamiento: Original vs Optimizada por annIA</p>
+    </section>
+
+    <div class="analytics-container">
+        <div class="chart-wrapper">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">Función de Ahorro</div>
+            
+            <div class="formula-box">
+                <div class="formula-label">Ahorro de tiempo:</div>
+                <div class="formula">A(x) = 0.03x + 0.2</div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(47, 198, 255, 0.2); padding-top: 15px;">
+                <div class="info-title">Funciones Graficadas</div>
+                
+                <div class="legend-item">
+                    <div class="legend-color legend-original"></div>
+                    <div class="legend-text">
+                        <strong>Original:</strong> T(x) = 0.08x + 0.5
+                    </div>
+                </div>
+
+                <div class="legend-item">
+                    <div class="legend-color legend-optimized"></div>
+                    <div class="legend-text">
+                        <strong>Optimizada:</strong> T_IA(x) = 0.05x + 0.3
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Rango X (Pacientes):</span>
+                    <span class="stat-value">0 - 50</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Rango Y (Horas):</span>
+                    <span class="stat-value">0 - 4.5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ahorro en x=50:</span>
+                    <span class="stat-value">1.7 horas</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="analytics-header" style="margin-top: 3rem;">
+        <h2>Optimización de Tratamiento</h2>
+        <p>Rango terapéutico óptimo de medicamento: determinación del punto crítico de dosis</p>
+    </section>
+
+    <div class="analytics-container">
+        <div class="chart-wrapper">
+            <canvas id="treatmentChart"></canvas>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">Parámetros Terapéuticos</div>
+            
+            <div style="background: rgba(102, 224, 255, 0.1); border-radius: 0.4rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid rgba(102, 224, 255, 0.2);">
+                <label style="display: block; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">Peso del Paciente (kg)</label>
+                <input type="number" id="patientWeight" min="20" max="200" value="80" style="width: 100%; padding: 0.6rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(102, 224, 255, 0.3); color: var(--interactive); border-radius: 0.4rem; font-size: 0.95rem;">
+            </div>
+            
+            <div class="formula-box">
+                <div class="formula-label">Función de efectividad:</div>
+                <div class="formula" id="formulaDisplay">E(x) = -0.5(x - 20)² + 100</div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(47, 198, 255, 0.2); padding-top: 15px;">
+                <div class="info-title">Punto Crítico (Derivada = 0)</div>
+                
+                <div class="stat-item" style="margin-bottom: 15px;">
+                    <span class="stat-label">Dosis óptima:</span>
+                    <span class="stat-value" id="optimalDosis">20 mg</span>
+                </div>
+
+                <div class="stat-item" style="margin-bottom: 15px;">
+                    <span class="stat-label">Efectividad máxima:</span>
+                    <span class="stat-value">100%</span>
+                </div>
+
+                <div id="riskAlert" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 0.4rem; padding: 0.75rem; margin-bottom: 1rem; color: #fca5a5; font-size: 0.85rem; display: none; text-align: center; font-weight: 600;">
+                    ⚠ Alerta de Riesgo
+                </div>
+
+                <div style="border-top: 1px solid rgba(47, 198, 255, 0.15); padding-top: 15px;">
+                    <div class="info-title">Rango Terapéutico</div>
+                    <div class="stat-item" style="margin-top: 10px;">
+                        <span class="stat-label">Mínimo seguro:</span>
+                        <span class="stat-value" id="minSafe">10 mg</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Máximo seguro:</span>
+                        <span class="stat-value" id="maxSafe">30 mg</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Efectividad mínima:</span>
+                        <span class="stat-value">75%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Generar datos para las funciones lineales
+    const generateData = () => {
+        const labels = [];
+        const originalData = [];
+        const optimizedData = [];
+
+        for (let x = 0; x <= 50; x++) {
+            labels.push(x);
+            // T(x) = 0.08x + 0.5
+            originalData.push(0.08 * x + 0.5);
+            // T_IA(x) = 0.05x + 0.3
+            optimizedData.push(0.05 * x + 0.3);
+        }
+
+        return { labels, originalData, optimizedData };
+    };
+
+    const { labels, originalData, optimizedData } = generateData();
+
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Función Original: T(x) = 0.08x + 0.5',
+                    data: originalData,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.1,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: '#3b82f6',
+                    hoverBorderWidth: 3,
+                },
+                {
+                    label: 'Función Optimizada: T_IA(x) = 0.05x + 0.3',
+                    data: optimizedData,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.1,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#10b981',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: '#10b981',
+                    hoverBorderWidth: 3,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#e0e0e0',
+                        font: {
+                            size: 13,
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        },
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    borderColor: '#2fc6ff',
+                    borderWidth: 1,
+                    titleColor: '#2fc6ff',
+                    bodyColor: '#e0e0e0',
+                    padding: 12,
+                    cornerRadius: 6,
+                    titleFont: {
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 11,
+                        family: "'Courier New', monospace"
+                    },
+                    displayColors: true,
+                    callbacks: {
+                        afterBody: function(context) {
+                            if (context.length > 0) {
+                                const x = context[0].label;
+                                const savings = 0.03 * x + 0.2;
+                                return [`Ahorro A(${x}): ${savings.toFixed(2)}h`];
+                            }
+                            return [];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Número de Pacientes',
+                        color: '#b0b0b0',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        color: '#b0b0b0',
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: true,
+                        borderColor: 'rgba(47, 198, 255, 0.1)',
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Tiempo (Horas)',
+                        color: '#b0b0b0',
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    ticks: {
+                        color: '#b0b0b0',
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value) {
+                            return value.toFixed(1) + 'h';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)',
+                        drawBorder: true,
+                        borderColor: 'rgba(47, 198, 255, 0.1)',
+                    }
+                }
+            }
+        }
+    });
+
+    // Variable global para el chart de tratamiento
+    let treatmentChart = null;
+
+    // Función para calcular el punto crítico (derivada = 0)
+    // f(x) = -0.5(x - xopt)² + 100
+    // f'(x) = -(x - xopt) = 0  =>  x = xopt
+    // xopt = peso * 0.25
+    const calculateCriticalPoint = (weight) => {
+        return weight * 0.25;
+    };
+
+    // Función para calcular la efectividad
+    const calculateEffectiveness = (dose, criticalPoint) => {
+        return -0.5 * Math.pow(dose - criticalPoint, 2) + 100;
+    };
+
+    // Función para generar datos interactivos basado en el peso
+    const generateTreatmentData = (weight) => {
+        const criticalPoint = calculateCriticalPoint(weight);
+        const labels = [];
+        const effectivenessData = [];
+        const optimalThreshold = [];
+
+        // Generar rango dinámico (±50% del punto crítico)
+        const maxDose = criticalPoint * 2;
+        const step = maxDose / 80;
+
+        for (let x = 0; x <= maxDose; x += step) {
+            labels.push(x.toFixed(1));
+            const y = calculateEffectiveness(x, criticalPoint);
+            effectivenessData.push(Math.max(0, y));
+            optimalThreshold.push(75);
+        }
+
+        return { labels, effectivenessData, optimalThreshold, criticalPoint };
+    };
+
+    // Función para actualizar la gráfica y valores
+    const updateTreatmentChart = () => {
+        const weightInput = document.getElementById('patientWeight');
+        const weight = parseFloat(weightInput.value) || 80;
+        
+        const { labels, effectivenessData, optimalThreshold, criticalPoint } = generateTreatmentData(weight);
+
+        // Actualizar fórmula
+        document.getElementById('formulaDisplay').textContent = 
+            `E(x) = -0.5(x - ${criticalPoint.toFixed(2)})² + 100`;
+
+        // Actualizar dosis óptima (punto crítico)
+        document.getElementById('optimalDosis').textContent = `${criticalPoint.toFixed(2)} mg`;
+
+        // Calcular rango seguro (efectividad >= 75%)
+        // -0.5(x - xopt)² + 100 >= 75
+        // -0.5(x - xopt)² >= -25
+        // (x - xopt)² <= 50
+        // |x - xopt| <= sqrt(50)
+        const safeRange = Math.sqrt(50);
+        const minSafe = Math.max(0, criticalPoint - safeRange);
+        const maxSafe = criticalPoint + safeRange;
+
+        document.getElementById('minSafe').textContent = `${minSafe.toFixed(2)} mg`;
+        document.getElementById('maxSafe').textContent = `${maxSafe.toFixed(2)} mg`;
+
+        // Destruir chart anterior
+        if (treatmentChart) {
+            treatmentChart.destroy();
+        }
+
+        // Crear nuevo chart
+        const ctxTreatment = document.getElementById('treatmentChart').getContext('2d');
+        treatmentChart = new Chart(ctxTreatment, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: `Efectividad: E(x) = -0.5(x - ${criticalPoint.toFixed(2)})² + 100`,
+                        data: effectivenessData,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#8b5cf6',
+                        hoverBorderWidth: 3,
+                    },
+                    {
+                        label: 'Umbral Terapéutico Mínimo (75%)',
+                        data: optimalThreshold,
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 0,
+                        pointHoverRadius: 0,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#e0e0e0',
+                            font: {
+                                size: 13,
+                                family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                            },
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 8,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        borderColor: '#8b5cf6',
+                        borderWidth: 1,
+                        titleColor: '#8b5cf6',
+                        bodyColor: '#e0e0e0',
+                        padding: 12,
+                        cornerRadius: 6,
+                        titleFont: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 11,
+                            family: "'Courier New', monospace"
+                        },
+                        displayColors: true,
+                        callbacks: {
+                            afterBody: function(context) {
+                                if (context.length > 0 && context[0].datasetIndex === 0) {
+                                    const dosis = parseFloat(context[0].label);
+                                    const efectividad = context[0].parsed.y.toFixed(1);
+                                    // dE/dx = -(x - xopt)
+                                    const derivada = -(dosis - criticalPoint);
+                                    
+                                    // Detectar riesgo
+                                    let riskStatus = '✓ Seguro';
+                                    if (dosis < minSafe) {
+                                        riskStatus = '⚠ Efectividad Insuficiente';
+                                    } else if (dosis > maxSafe) {
+                                        riskStatus = '⚠ Riesgo de Toxicidad';
+                                    }
+
+                                    return [
+                                        `Dosis: ${dosis} mg`,
+                                        `Efectividad: ${efectividad}%`,
+                                        `Derivada: ${derivada.toFixed(2)}`,
+                                        `Estado: ${riskStatus}`
+                                    ];
+                                }
+                                return [];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Dosis (mg)',
+                            color: '#b0b0b0',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#b0b0b0',
+                            font: {
+                                size: 11
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: true,
+                            borderColor: 'rgba(47, 198, 255, 0.1)',
+                        }
+                    },
+                    y: {
+                        display: true,
+                        min: 0,
+                        max: 110,
+                        title: {
+                            display: true,
+                            text: 'Efectividad (%)',
+                            color: '#b0b0b0',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#b0b0b0',
+                            font: {
+                                size: 11
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: true,
+                            borderColor: 'rgba(47, 198, 255, 0.1)',
+                        }
+                    }
+                }
+            }
+        });
+    };
+
+    // Event listener para cambios en el peso
+    document.getElementById('patientWeight').addEventListener('input', updateTreatmentChart);
+
+    // Inicializar gráfica
+    updateTreatmentChart();
+</script>
+{% endblock %}

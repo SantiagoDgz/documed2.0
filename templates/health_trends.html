@@ -1,0 +1,557 @@
+{% extends "base.html" %}
+
+{% block title %}Tendencia de Salud - DOCUMED BY HVIRFILL{% endblock %}
+
+{% block content %}
+<div class="health-trends-page">
+    <section class="trends-header">
+        <h2>Monitoreo de Tendencias de Salud</h2>
+        <p>Registra datos clínicos de tus pacientes y analiza automáticamente la pendiente (derivada) de cambios</p>
+    </section>
+
+    <!-- SELECTOR DE PACIENTE -->
+    <div class="patient-selector-section">
+        <div class="patient-selector-group">
+            <label for="patientSelect">Selecciona un Paciente:</label>
+            <select id="patientSelect" onchange="loadPatientTrends(this.value)">
+                <option value="">-- Seleccionar --</option>
+                {% for patient in patients %}
+                <option value="{{ patient.id }}" {% if selected_patient_id|string == patient.id|string %}selected{% endif %}>
+                    {{ patient.name }} (ID: {{ patient.id }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="trends-container" id="trendsContainer">
+        <!-- GLUCOSA -->
+        <div class="trend-card">
+            <div class="trend-header">
+                <h3>Glucosa en Sangre</h3>
+                <div id="glucosaTrendIndicator" class="trend-indicator"></div>
+            </div>
+
+            <div class="input-section">
+                <h4>Agregar Registro</h4>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Fecha:</label>
+                        <input type="date" id="glucoseDateInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Valor (mg/dL):</label>
+                        <input type="number" id="glucoseValueInput" min="50" max="300" placeholder="110">
+                    </div>
+                    <button type="button" id="addGlucoseBtn" class="btn-add">+ Agregar</button>
+                </div>
+            </div>
+
+            <div class="data-list">
+                <h4>Registros (últimos 5)</h4>
+                <table id="glucoseTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Valor</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="glucoseTableBody">
+                    </tbody>
+                </table>
+                <p id="glucoseEmptyMsg" class="empty-msg">No hay registros aún</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="glucoseChart"></canvas>
+            </div>
+
+            <div class="trend-metrics">
+                <div class="metric">
+                    <span class="metric-label">Último valor:</span>
+                    <span class="metric-value" id="lastGlucoseValue">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Pendiente (derivada):</span>
+                    <span class="metric-value" id="glucoseSlope">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Cambio por día:</span>
+                    <span class="metric-value" id="glucoseChange">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Tendencia:</span>
+                    <span class="metric-value" id="glucoseTrend">-</span>
+                </div>
+            </div>
+
+            <div id="glucoseAlert" class="trend-alert hidden"></div>
+
+            <div class="formula-info">
+                <p><strong>Cálculo de la derivada:</strong></p>
+                <p class="formula">m = (y₂ - y₁) / (x₂ - x₁)</p>
+                <p class="formula-small">Donde x = días, y = mg/dL</p>
+            </div>
+        </div>
+
+        <!-- PRESIÓN ARTERIAL -->
+        <div class="trend-card">
+            <div class="trend-header">
+                <h3>Presión Arterial Sistólica</h3>
+                <div id="bpTrendIndicator" class="trend-indicator"></div>
+            </div>
+
+            <div class="input-section">
+                <h4>Agregar Registro</h4>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Fecha:</label>
+                        <input type="date" id="bpDateInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Valor (mmHg):</label>
+                        <input type="number" id="bpValueInput" min="80" max="200" placeholder="120">
+                    </div>
+                    <button type="button" id="addBPBtn" class="btn-add">+ Agregar</button>
+                </div>
+            </div>
+
+            <div class="data-list">
+                <h4>Registros (últimos 5)</h4>
+                <table id="bpTable">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Valor</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bpTableBody">
+                    </tbody>
+                </table>
+                <p id="bpEmptyMsg" class="empty-msg">No hay registros aún</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="bpChart"></canvas>
+            </div>
+
+            <div class="trend-metrics">
+                <div class="metric">
+                    <span class="metric-label">Último valor:</span>
+                    <span class="metric-value" id="lastBPValue">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Pendiente (derivada):</span>
+                    <span class="metric-value" id="bpSlope">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Cambio por día:</span>
+                    <span class="metric-value" id="bpChange">-</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Tendencia:</span>
+                    <span class="metric-value" id="bpTrend">-</span>
+                </div>
+            </div>
+
+            <div id="bpAlert" class="trend-alert hidden"></div>
+
+            <div class="formula-info">
+                <p><strong>Umbral crítico:</strong> ±15 mmHg por día</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <p>Selecciona un paciente para registrar sus tendencias de salud.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let currentPatientId = '{{ selected_patient_id or "" }}' === '' ? null : parseInt('{{ selected_patient_id or 0 }}');
+    let glucoseData = [];
+    let bpData = [];
+    let glucoseChart = null;
+    let bpChart = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('✅ DOMContentLoaded disparado');
+        const today = new Date().toISOString().split('T')[0];
+        const gDate = document.getElementById('glucoseDateInput');
+        const bDate = document.getElementById('bpDateInput');
+        
+        if(gDate) gDate.value = today;
+        if(bDate) bDate.value = today;
+        
+        // Manejo de estado inicial
+        const container = document.getElementById('trendsContainer');
+        const empty = document.getElementById('emptyState');
+        
+        console.log('currentPatientId:', currentPatientId);
+        
+        if (currentPatientId && currentPatientId !== 'null') {
+            container.style.display = 'block';
+            empty.style.display = 'none';
+            loadPatientTrends(currentPatientId);
+        } else {
+            container.style.display = 'none';
+            empty.style.display = 'block';
+        }
+
+        // Listeners de botones
+        const glucoseBtn = document.getElementById('addGlucoseBtn');
+        const bpBtn = document.getElementById('addBPBtn');
+        console.log('Botones encontrados:', {glucoseBtn: !!glucoseBtn, bpBtn: !!bpBtn});
+        
+        if(glucoseBtn) {
+            glucoseBtn.onclick = () => {
+                console.log('🔘 Click en glucosa btn');
+                const val = document.getElementById('glucoseValueInput').value;
+                const date = document.getElementById('glucoseDateInput').value;
+                console.log('Valores:', {val, date, currentPatientId});
+                if(val && date) {
+                    console.log('📤 Llamando saveHealthTrend...');
+                    saveHealthTrend(currentPatientId, 'glucosa', val, 'mg/dL', date);
+                } else {
+                    console.log('⚠️ Falta valor o fecha');
+                }
+            };
+        }
+
+        if(bpBtn) {
+            bpBtn.onclick = () => {
+                console.log('🔘 Click en BP btn');
+                const val = document.getElementById('bpValueInput').value;
+                const date = document.getElementById('bpDateInput').value;
+                console.log('Valores:', {val, date, currentPatientId});
+                if(val && date) {
+                    console.log('📤 Llamando saveHealthTrend...');
+                    saveHealthTrend(currentPatientId, 'presion_arterial', val, 'mmHg', date);
+                } else {
+                    console.log('⚠️ Falta valor o fecha');
+                }
+            };
+        }
+        console.log('✅ Event listeners registrados');
+    });
+
+    const calculateDerivative = (data) => {
+        if (data.length < 2) return { slope: 0, change: 0 };
+        const last = data[data.length - 1];
+        const prev = data[data.length - 2];
+        
+        const d1 = new Date(prev.fecha);
+        const d2 = new Date(last.fecha);
+        const diffTime = Math.abs(d2 - d1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+        
+        // Fórmula de la derivada: (y2 - y1) / (x2 - x1)
+        const slope = (last.valor - prev.valor) / diffDays;
+        return { slope, change: last.valor - prev.valor };
+    };
+
+    const getAlertStatus = (slope, threshold) => {
+        // Umbrales más sensibles
+        const criticalThreshold = threshold;
+        const warningThreshold = threshold * 0.6;
+        
+        if (slope > criticalThreshold) {
+            return { type: 'critical', message: '⚠ CRÍTICA ALZA', icon: '📈' };
+        } else if (slope < -criticalThreshold) {
+            return { type: 'critical-low', message: '⚠ CAÍDA CRÍTICA', icon: '📉' };
+        } else if (slope > warningThreshold) {
+            return { type: 'warning', message: '↑ Alza Moderada', icon: '⬆' };
+        } else if (slope < -warningThreshold) {
+            return { type: 'improving', message: '✓ Mejorando', icon: '⬇' };
+        } else if (Math.abs(slope) < 0.5) {
+            return { type: 'stable', message: '→ Estable', icon: '→' };
+        } else {
+            return { type: 'slight-change', message: '≈ Cambio ligero', icon: '≈' };
+        }
+    };
+
+    async function loadPatientTrends(patientId) {
+        const trendsContainer = document.getElementById('trendsContainer');
+        const emptyState = document.getElementById('emptyState');
+        const addGlucoseBtn = document.getElementById('addGlucoseBtn');
+        const addBPBtn = document.getElementById('addBPBtn');
+        
+        if (!patientId) {
+            trendsContainer.style.display = 'none';
+            emptyState.style.display = 'block';
+            addGlucoseBtn.disabled = true;
+            addBPBtn.disabled = true;
+            currentPatientId = null;
+            return;
+        }
+        
+        trendsContainer.style.display = 'block';
+        emptyState.style.display = 'none';
+        addGlucoseBtn.disabled = false;
+        addBPBtn.disabled = false;
+        
+        try {
+            const response = await fetch(`/api/health-trends/${patientId}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                glucoseData = (result.data.glucosa || []).map(d => ({
+                    fecha: d.fecha,
+                    valor: d.value
+                })).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+                
+                bpData = (result.data.presion_arterial || []).map(d => ({
+                    fecha: d.fecha,
+                    valor: d.value
+                })).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+                
+                currentPatientId = patientId;
+                updateGlucoseDisplay();
+                updateBPDisplay();
+            }
+        } catch (error) {
+            console.error('Error cargando datos:', error);
+        }
+    }
+
+    async function saveHealthTrend(pId, type, val, unit, date) {
+        console.log('💾 saveHealthTrend llamada:', {pId, type, val, unit, date});
+        
+        if(!pId) {
+            console.error('❌ No hay paciente seleccionado');
+            alert('Selecciona un paciente primero');
+            return;
+        }
+        
+        const nuevoRegistro = { fecha: date, valor: parseFloat(val) };
+        console.log('📝 Nuevo registro local:', nuevoRegistro);
+        
+        // Guardar en servidor
+        try {
+            console.log('📤 Enviando a servidor...');
+            const response = await fetch('/api/health-trends/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ patient_id: pId, metric_type: type, value: val, unit: unit, measurement_date: date })
+            });
+            const result = await response.json();
+            console.log('📥 Respuesta del servidor:', result);
+            
+            if(result.success) {
+                console.log('✅ Guardado en servidor exitosamente');
+            } else {
+                console.error('⚠️ Error del servidor:', result.error);
+            }
+        } catch(e) { 
+            console.error('⚠️ Error en fetch:', e.message); 
+        }
+
+        // Actualizar datos locales SIEMPRE (incluso si falla el servidor)
+        console.log('🔄 Actualizando datos locales...');
+        if (type === 'glucosa') {
+            glucoseData.push(nuevoRegistro);
+            glucoseData.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            updateGlucoseDisplay();
+            document.getElementById('glucoseValueInput').value = '';
+        } else {
+            bpData.push(nuevoRegistro);
+            bpData.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            updateBPDisplay();
+            document.getElementById('bpValueInput').value = '';
+        }
+        console.log('✅ Datos actualizados en pantalla');
+    }
+
+    window.deleteGlucoseRecord = (index) => {
+        glucoseData.splice(index, 1);
+        updateGlucoseDisplay();
+    };
+
+    window.deleteBPRecord = (index) => {
+        bpData.splice(index, 1);
+        updateBPDisplay();
+    };
+
+    const updateGlucoseDisplay = () => {
+        const tableBody = document.getElementById('glucoseTableBody');
+        const emptyMsg = document.getElementById('glucoseEmptyMsg');
+        tableBody.innerHTML = '';
+        
+        if (glucoseData.length === 0) {
+            emptyMsg.style.display = 'block';
+            document.getElementById('lastGlucoseValue').textContent = '-';
+            document.getElementById('glucoseSlope').textContent = '-';
+            document.getElementById('glucoseChange').textContent = '-';
+            document.getElementById('glucoseTrend').textContent = '-';
+            if (glucoseChart) glucoseChart.destroy();
+            return;
+        }
+        
+        emptyMsg.style.display = 'none';
+        glucoseData.slice(-5).forEach((item, idx) => {
+            const realIndex = glucoseData.length - 5 + idx;
+            const row = `<tr><td>${item.fecha}</td><td class="value">${item.valor} mg/dL</td><td><button class="btn-delete" onclick="deleteGlucoseRecord(${realIndex})">✕</button></td></tr>`;
+            tableBody.innerHTML += row;
+        });
+
+        const derivative = calculateDerivative(glucoseData);
+        document.getElementById('lastGlucoseValue').textContent = glucoseData[glucoseData.length - 1].valor + ' mg/dL';
+        document.getElementById('glucoseSlope').textContent = derivative.slope.toFixed(2) + ' mg/dL/día';
+        document.getElementById('glucoseChange').textContent = (derivative.change > 0 ? '+' : '') + derivative.change + ' mg/dL';
+        document.getElementById('glucoseTrend').textContent = derivative.slope > 0 ? 'Sube' : 'Baja';
+
+        if (glucoseChart) glucoseChart.destroy();
+        const glucoseLabels = glucoseData.map(d => d.fecha);
+        const glucoseValues = glucoseData.map(d => d.valor);
+        const glucoseCtx = document.getElementById('glucoseChart').getContext('2d');
+        glucoseChart = new Chart(glucoseCtx, {
+            type: 'line',
+            data: {
+                labels: glucoseLabels,
+                datasets: [{
+                    label: 'Glucosa (mg/dL)',
+                    data: glucoseValues,
+                    borderColor: '#2fc6ff',
+                    backgroundColor: 'rgba(47, 198, 255, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: true, labels: { color: '#e0e0e0' } }
+                },
+                scales: {
+                    y: { ticks: { color: '#b0b0b0' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    x: { ticks: { color: '#b0b0b0' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                }
+            }
+        });
+    };
+
+    const updateBPDisplay = () => {
+        const tableBody = document.getElementById('bpTableBody');
+        const emptyMsg = document.getElementById('bpEmptyMsg');
+        tableBody.innerHTML = '';
+        if (bpData.length === 0) {
+            emptyMsg.style.display = 'block';
+            document.getElementById('lastBPValue').textContent = '-';
+            document.getElementById('bpSlope').textContent = '-';
+            document.getElementById('bpChange').textContent = '-';
+            document.getElementById('bpTrend').textContent = '-';
+            document.getElementById('bpAlert').classList.add('hidden');
+            if (bpChart) bpChart.destroy();
+            return;
+        }
+        emptyMsg.style.display = 'none';
+
+        bpData.slice(-5).forEach((item, idx) => {
+            const realIndex = bpData.length - 5 + idx;
+            const row = `<tr><td>${item.fecha}</td><td class="value">${item.valor} mmHg</td><td><button class="btn-delete" onclick="deleteBPRecord(${realIndex})">✕</button></td></tr>`;
+            tableBody.innerHTML += row;
+        });
+
+        const derivative = calculateDerivative(bpData);
+        const alert = getAlertStatus(derivative.slope, 8); // Umbral 8 mmHg por día
+        document.getElementById('lastBPValue').textContent = bpData[bpData.length - 1].valor + ' mmHg';
+        document.getElementById('bpSlope').textContent = derivative.slope.toFixed(2) + ' mmHg/día';
+        document.getElementById('bpChange').textContent = (derivative.change > 0 ? '+' : '') + derivative.change + ' mmHg';
+        document.getElementById('bpTrend').textContent = alert.message;
+
+        const bpAlertEl = document.getElementById('bpAlert');
+        if (Math.abs(derivative.slope) > 1) {
+            bpAlertEl.className = `trend-alert ${alert.type} hidden`;
+            setTimeout(() => bpAlertEl.classList.remove('hidden'), 10);
+            bpAlertEl.innerHTML = `${alert.icon} ${alert.message}`;
+        } else {
+            bpAlertEl.classList.add('hidden');
+        }
+
+        const bpIndicatorEl = document.getElementById('bpTrendIndicator');
+        if (derivative.slope > 8) {
+            bpIndicatorEl.className = 'trend-indicator critical-up';
+            bpIndicatorEl.innerHTML = '📈 Crítica';
+        } else if (derivative.slope < -8) {
+            bpIndicatorEl.className = 'trend-indicator critical-down';
+            bpIndicatorEl.innerHTML = '📉 Caída';
+        } else if (derivative.slope > 2.5) {
+            bpIndicatorEl.className = 'trend-indicator warning';
+            bpIndicatorEl.innerHTML = '⬆ Sube';
+        } else if (derivative.slope < -2.5) {
+            bpIndicatorEl.className = 'trend-indicator improving';
+            bpIndicatorEl.innerHTML = '⬇ Baja';
+        } else {
+            bpIndicatorEl.className = 'trend-indicator stable';
+            bpIndicatorEl.innerHTML = '→ Estable';
+        }
+
+        if (bpChart) bpChart.destroy();
+        const bpLabels = bpData.map(d => d.fecha);
+        const bpValues = bpData.map(d => d.valor);
+        const bpCtx = document.getElementById('bpChart').getContext('2d');
+        bpChart = new Chart(bpCtx, {
+            type: 'line',
+            data: {
+                labels: bpLabels,
+                datasets: [{
+                    label: 'Presión Arterial Sistólica (mmHg)',
+                    data: bpValues,
+                    borderColor: '#66e0ff',
+                    backgroundColor: 'rgba(102, 224, 255, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#66e0ff',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: true, labels: { color: '#e0e0e0', font: { size: 12 }, padding: 15 } },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        borderColor: '#66e0ff',
+                        borderWidth: 1,
+                        titleColor: '#66e0ff',
+                        bodyColor: '#e0e0e0',
+                        callbacks: { afterBody: () => [`m = ${derivative.slope ? derivative.slope.toFixed(2) : '0'} mmHg/día`] }
+                    }
+                },
+                scales: {
+                    y: { ticks: { color: '#b0b0b0', callback: v => v + ' mmHg' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
+                    x: { ticks: { color: '#b0b0b0' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+                }
+            }
+        });
+    };
+
+    if (currentPatientId) {
+        loadPatientTrends(currentPatientId);
+    }
+</script>
+
+<style>
+    .health-trends-page { padding: 20px; }
+    .trends-header { margin-bottom: 30px; text-align: center; }
+    .trends-header h2 { color: #2fc6ff; font-size: 2em; margin-bottom: 10px; }
+    .trends-header p { color: #b0b0b0; font-size: 1.1em; }
+    .patient-selector-section { margin-bottom: 30px; background: rgba(0, 20, 40, 0.5); padding: 20px; border-radius: 8px; border: 1px solid rgba(47, 198, 255, 0.3); }
+    .patient-selector-group { display: flex; align-items: center; gap: 15px; }
+    .patient-selector-group label { font-weight: bold; color: #e0e0e0; }
+    .patient-selector-group select { flex: 1; padding: 10px 15px; background: rgba(0, 20, 40, 0.8); border: 1px solid #2fc6ff; color: #e0e0e0; border-radius: 4px; font-size: 1em; cursor: pointer; }
+    .patient-selector-group select:hover { background: rgba(0, 30, 60, 0.9); }
+    .empty-state { text-align: center; padding: 60px 20px; color: #b0b0b0; font-size: 1.2em; }
+</style>
+{% endblock %}

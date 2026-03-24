@@ -567,3 +567,642 @@ select {
         grid-template-columns: 1fr;
     }
 }
+
+/* Analytics Page Styles */
+.analytics-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.analytics-header {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.analytics-header h2 {
+    font-size: 2rem;
+    color: var(--interactive);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.analytics-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.analytics-container {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    padding: 2rem;
+    background: rgba(20, 25, 40, 0.5);
+    border: 1px solid rgba(47, 198, 255, 0.15);
+    border-radius: 0.75rem;
+}
+
+.chart-wrapper {
+    background: rgba(10, 18, 39, 0.8);
+    border: 1px solid rgba(47, 198, 255, 0.1);
+    border-radius: 0.65rem;
+    padding: 1.5rem;
+}
+
+.chart-wrapper canvas {
+    max-height: 400px;
+}
+
+.info-box {
+    background: linear-gradient(135deg, rgba(47, 198, 255, 0.08) 0%, rgba(76, 175, 80, 0.08) 100%);
+    border: 2px solid rgba(47, 198, 255, 0.15);
+    border-radius: 0.65rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: fit-content;
+    position: sticky;
+    top: 1.5rem;
+}
+
+.info-title {
+    color: var(--interactive);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.formula-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.4rem;
+    padding: 1rem;
+    border-left: 3px solid var(--interactive);
+}
+
+.formula-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+}
+
+.formula {
+    color: var(--interactive);
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+}
+
+.legend-original {
+    background: #3b82f6;
+}
+
+.legend-optimized {
+    background: #10b981;
+}
+
+.legend-text {
+    font-size: 0.82rem;
+    color: var(--text-main);
+    line-height: 1.3;
+}
+
+.stats {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(47, 198, 255, 0.15);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+    font-size: 0.8rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+}
+
+.stat-value {
+    color: var(--interactive);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+@media (max-width: 840px) {
+    .analytics-container {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .info-box {
+        position: static;
+    }
+
+    .chart-wrapper {
+        padding: 1rem;
+    }
+
+    .chart-wrapper canvas {
+        max-height: 300px;
+    }
+
+    .analytics-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .analytics-container {
+        padding: 1rem;
+    }
+
+    .info-box {
+        padding: 1rem;
+    }
+
+    .chart-wrapper {
+        padding: 0.75rem;
+    }
+
+    .analytics-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .analytics-header p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Health Trends Page Styles */
+.health-trends-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.trends-header {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.trends-header h2 {
+    font-size: 2rem;
+    color: var(--interactive);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.trends-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.patient-selector {
+    background: rgba(20, 25, 40, 0.5);
+    border: 1px solid rgba(47, 198, 255, 0.15);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.patient-selector label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+}
+
+.patient-selector select {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(10, 18, 39, 0.8);
+    border: 1px solid rgba(47, 198, 255, 0.2);
+    color: var(--interactive);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.patient-selector select:focus {
+    outline: none;
+    border-color: var(--interactive);
+    box-shadow: 0 0 10px rgba(47, 198, 255, 0.2);
+}
+
+.patient-selector select option {
+    background: var(--bg-panel);
+    color: var(--text-main);
+}
+
+/* Input Section Styles */
+.input-section {
+    background: rgba(10, 18, 39, 0.6);
+    border: 1px solid rgba(47, 198, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.input-section h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--interactive-hover);
+    font-size: 0.9rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.input-group {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-group label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.input-group input {
+    padding: 0.6rem;
+    background: rgba(10, 18, 39, 0.8);
+    border: 1px solid rgba(47, 198, 255, 0.2);
+    color: var(--interactive);
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--interactive);
+    box-shadow: 0 0 8px rgba(47, 198, 255, 0.15);
+}
+
+.btn-add {
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, rgba(47, 198, 255, 0.2), rgba(102, 224, 255, 0.2));
+    border: 1px solid rgba(47, 198, 255, 0.3);
+    color: var(--interactive);
+    border-radius: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-add:hover {
+    background: linear-gradient(135deg, rgba(47, 198, 255, 0.35), rgba(102, 224, 255, 0.35));
+    border-color: var(--interactive);
+    box-shadow: 0 0 12px rgba(47, 198, 255, 0.2);
+}
+
+.btn-add:active {
+    transform: scale(0.98);
+}
+
+/* Data List Styles */
+.data-list {
+    background: rgba(10, 18, 39, 0.6);
+    border: 1px solid rgba(47, 198, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.data-list h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--interactive-hover);
+    font-size: 0.9rem;
+}
+
+.data-list table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.data-list table thead {
+    background: rgba(47, 198, 255, 0.1);
+    border-bottom: 1px solid rgba(47, 198, 255, 0.2);
+}
+
+.data-list table th {
+    padding: 0.6rem;
+    text-align: left;
+    color: var(--interactive);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+.data-list table td {
+    padding: 0.6rem;
+    border-bottom: 1px solid rgba(47, 198, 255, 0.08);
+    color: var(--text-secondary);
+}
+
+.data-list table td.value {
+    color: var(--interactive);
+    font-weight: 500;
+    font-family: 'Courier New', monospace;
+}
+
+.data-list table tbody tr:hover {
+    background: rgba(47, 198, 255, 0.05);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+}
+
+.empty-msg {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin: 1rem 0 0;
+    display: none;
+}
+
+.trends-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+}
+
+.trend-card {
+    background: rgba(20, 25, 40, 0.5);
+    border: 1px solid rgba(47, 198, 255, 0.15);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.trend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(47, 198, 255, 0.1);
+}
+
+.trend-header h3 {
+    margin: 0;
+    color: var(--interactive-hover);
+    font-size: 1.2rem;
+}
+
+.trend-indicator {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+}
+
+.trend-indicator.critical-up {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.trend-indicator.critical-down {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.trend-indicator.warning {
+    background: rgba(251, 146, 60, 0.2);
+    color: #fed7aa;
+    border: 1px solid rgba(251, 146, 60, 0.4);
+}
+
+.trend-indicator.improving {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.trend-indicator.stable {
+    background: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.chart-container {
+    background: rgba(10, 18, 39, 0.8);
+    border: 1px solid rgba(47, 198, 255, 0.1);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+.trend-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.metric {
+    background: rgba(10, 18, 39, 0.6);
+    border-left: 3px solid var(--interactive);
+    padding: 0.75rem;
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metric-value {
+    color: var(--interactive);
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.trend-alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid;
+    font-weight: 600;
+    text-align: center;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.trend-alert.hidden {
+    display: none;
+}
+
+.trend-alert.critical {
+    background: rgba(239, 68, 68, 0.15);
+    border-left-color: #ef4444;
+    color: #fca5a5;
+}
+
+.trend-alert.critical-low {
+    background: rgba(239, 68, 68, 0.15);
+    border-left-color: #ef4444;
+    color: #fca5a5;
+}
+
+.trend-alert.warning {
+    background: rgba(251, 146, 60, 0.15);
+    border-left-color: #fb923c;
+    color: #fed7aa;
+}
+
+.trend-alert.improving {
+    background: rgba(34, 197, 94, 0.15);
+    border-left-color: #22c55e;
+    color: #86efac;
+}
+
+.trend-alert.stable {
+    background: rgba(59, 130, 246, 0.15);
+    border-left-color: #3b82f6;
+    color: #93c5fd;
+}
+
+.formula-info {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 0.4rem;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.formula-info p {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.formula-info strong {
+    color: var(--interactive);
+}
+
+.formula {
+    font-family: 'Courier New', monospace;
+    color: var(--interactive);
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.formula-small {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0.3rem 0 0;
+}
+
+@media (max-width: 1024px) {
+    .trends-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .trends-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .trend-card {
+        padding: 1rem;
+    }
+
+    .trend-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .trend-header h3 {
+        font-size: 1rem;
+    }
+
+    .trend-indicator {
+        width: 100%;
+    }
+
+    .trend-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        min-height: 250px;
+    }
+
+    .formula-info {
+        font-size: 0.8rem;
+    }
+}

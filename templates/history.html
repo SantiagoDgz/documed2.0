@@ -14,6 +14,34 @@
                     <h3>{{ row['name'] }}</h3>
                     <p><strong>Diagnóstico:</strong> {{ row['diagnosis'] }}</p>
                     <p><strong>Tratamiento:</strong> {{ row['treatment'] }}</p>
+                    
+                    <!-- Mostrar tendencias de salud si existen -->
+                    {% if patient_trends.get(row['id']) %}
+                    <div class="health-trends-summary">
+                        <strong>Tendencias de Salud:</strong>
+                        <div class="trends-data">
+                            {% if patient_trends[row['id']]['metrics'].get('glucosa') %}
+                            <div class="trend-badge glucosa">
+                                <span class="metric-icon">🩸</span>
+                                <span class="metric-name">Glucosa</span>
+                                <span class="metric-value">{{ patient_trends[row['id']]['metrics']['glucosa'][0]['value'] }} {{ patient_trends[row['id']]['metrics']['glucosa'][0]['unit'] }}</span>
+                                <span class="metric-date">{{ patient_trends[row['id']]['metrics']['glucosa'][0]['date'] }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if patient_trends[row['id']]['metrics'].get('presion_arterial') %}
+                            <div class="trend-badge presion">
+                                <span class="metric-icon">❤️</span>
+                                <span class="metric-name">P. Arterial</span>
+                                <span class="metric-value">{{ patient_trends[row['id']]['metrics']['presion_arterial'][0]['value'] }} {{ patient_trends[row['id']]['metrics']['presion_arterial'][0]['unit'] }}</span>
+                                <span class="metric-date">{{ patient_trends[row['id']]['metrics']['presion_arterial'][0]['date'] }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <small class="trends-count">Total registros: {{ patient_trends[row['id']]['count'] }}</small>
+                    </div>
+                    {% endif %}
+                    
                     <small>Última actualización: {{ row['updated_at'] }}</small>
                 </div>
                 <a href="{{ url_for('patient_detail', patient_id=row['id']) }}">Ver expediente</a>
@@ -23,4 +51,68 @@
         {% endfor %}
     </ul>
 </section>
+
+<style>
+    .health-trends-summary {
+        background: rgba(47, 198, 255, 0.05);
+        border-left: 3px solid #2fc6ff;
+        padding: 12px 15px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+    
+    .trends-data {
+        display: flex;
+        gap: 12px;
+        margin: 8px 0;
+        flex-wrap: wrap;
+    }
+    
+    .trend-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 20, 40, 0.8);
+        border: 1px solid #2fc6ff;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.85em;
+    }
+    
+    .trend-badge.glucosa {
+        border-color: #FFB6C1;
+        background: rgba(255, 182, 193, 0.1);
+    }
+    
+    .trend-badge.presion {
+        border-color: #FF6B6B;
+        background: rgba(255, 107, 107, 0.1);
+    }
+    
+    .metric-icon {
+        font-size: 1.1em;
+    }
+    
+    .metric-name {
+        font-weight: bold;
+        color: #b0b0b0;
+    }
+    
+    .metric-value {
+        color: #2fc6ff;
+        font-weight: bold;
+    }
+    
+    .metric-date {
+        color: #808080;
+        font-size: 0.8em;
+    }
+    
+    .trends-count {
+        display: block;
+        margin-top: 6px;
+        color: #808080;
+    }
+</style>
 {% endblock %}

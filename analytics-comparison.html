@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Optimización con IA - DOCUMED</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(20, 25, 40, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(47, 198, 255, 0.1);
+        }
+
+        header {
+            background: linear-gradient(135deg, rgba(47, 198, 255, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 2px solid rgba(47, 198, 255, 0.2);
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #2fc6ff;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        header p {
+            color: #b0b0b0;
+            font-size: 14px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .chart-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(47, 198, 255, 0.1);
+        }
+
+        .chart-wrapper canvas {
+            max-height: 400px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(47, 198, 255, 0.1) 0%, rgba(76, 175, 80, 0.1) 100%);
+            border-radius: 8px;
+            padding: 20px;
+            border: 2px solid rgba(47, 198, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .info-title {
+            color: #2fc6ff;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 3px solid #2fc6ff;
+        }
+
+        .formula-label {
+            color: #b0b0b0;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .formula {
+            color: #2fc6ff;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .legend-original {
+            background: #3b82f6;
+        }
+
+        .legend-optimized {
+            background: #10b981;
+        }
+
+        .legend-text {
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+
+        .stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(47, 198, 255, 0.2);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+        }
+
+        .stat-value {
+            color: #2fc6ff;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .info-box {
+                position: static;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .chart-wrapper canvas {
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 8px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .chart-wrapper {
+                padding: 15px;
+            }
+
+            .info-box {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Análisis de Optimización con IA</h1>
+            <p>Comparación de tiempo de procesamiento: Original vs Optimizada por annIA</p>
+        </header>
+
+        <div class="content">
+            <div class="chart-wrapper">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+
+            <div class="info-box">
+                <div class="info-title">Función de Ahorro</div>
+                
+                <div class="formula-box">
+                    <div class="formula-label">Ahorro de tiempo:</div>
+                    <div class="formula">A(x) = 0.03x + 0.2</div>
+                </div>
+
+                <div style="border-top: 1px solid rgba(47, 198, 255, 0.2); padding-top: 15px;">
+                    <div class="info-title">Funciones Graficadas</div>
+                    
+                    <div class="legend-item">
+                        <div class="legend-color legend-original"></div>
+                        <div class="legend-text">
+                            <strong>Original:</strong> T(x) = 0.08x + 0.5
+                        </div>
+                    </div>
+
+                    <div class="legend-item">
+                        <div class="legend-color legend-optimized"></div>
+                        <div class="legend-text">
+                            <strong>Optimizada:</strong> T_IA(x) = 0.05x + 0.3
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Rango X (Pacientes):</span>
+                        <span class="stat-value">0 - 50</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Rango Y (Horas):</span>
+                        <span class="stat-value">0 - 4.5</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Ahorro en x=50:</span>
+                        <span class="stat-value">1.7 horas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generar datos para las funciones lineales
+        const generateData = () => {
+            const labels = [];
+            const originalData = [];
+            const optimizedData = [];
+
+            for (let x = 0; x <= 50; x++) {
+                labels.push(x);
+                // T(x) = 0.08x + 0.5
+                originalData.push(0.08 * x + 0.5);
+                // T_IA(x) = 0.05x + 0.3
+                optimizedData.push(0.05 * x + 0.3);
+            }
+
+            return { labels, originalData, optimizedData };
+        };
+
+        const { labels, originalData, optimizedData } = generateData();
+
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Función Original: T(x) = 0.08x + 0.5',
+                        data: originalData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#3b82f6',
+                        hoverBorderWidth: 3,
+                    },
+                    {
+                        label: 'Función Optimizada: T_IA(x) = 0.05x + 0.3',
+                        data: optimizedData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.1,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#10b981',
+                        hoverBorderWidth: 3,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#e0e0e0',
+                            font: {
+                                size: 13,
+                                family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                            },
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: 8,
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        borderColor: '#2fc6ff',
+                        borderWidth: 1,
+                        padding: 12,
+                        titleColor: '#2fc6ff',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyColor: '#e0e0e0',
+                        bodyFont: { size: 12 },
+                        displayColors: true,
+                        callbacks: {
+                            title: function(context) {
+                                return 'Pacientes: ' + context[0].label;
+                            },
+                            label: function(context) {
+                                const x = parseInt(context.label);
+                                let value = context.parsed.y.toFixed(2);
+                                
+                                // Calcular ahorro para mejor contexto
+                                const original = 0.08 * x + 0.5;
+                                const optimized = 0.05 * x + 0.3;
+                                const savings = (original - optimized).toFixed(2);
+
+                                let label = context.dataset.label;
+                                label += ' → ' + value + ' horas';
+                                
+                                if (context.datasetIndex === 1) {
+                                    label += ' (Ahorro: ' + savings + ' h)';
+                                }
+
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Número de Pacientes (x)',
+                            color: '#e0e0e0',
+                            font: { size: 13, weight: 'bold' }
+                        },
+                        ticks: {
+                            color: '#b0b0b0',
+                            font: { size: 11 },
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false,
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Tiempo (Horas)',
+                            color: '#e0e0e0',
+                            font: { size: 13, weight: 'bold' }
+                        },
+                        beginAtZero: true,
+                        max: 4.5,
+                        ticks: {
+                            color: '#b0b0b0',
+                            font: { size: 11 },
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false,
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
