@@ -8,9 +8,9 @@ services:
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: GROK_API_KEY
+      - key: GROQ_API_KEY
         sync: false
-      - key: GROK_MODEL
+      - key: GROQ_MODEL
         value: ""
-      - key: GROK_PROVIDER
+      - key: GROQ_PROVIDER
         value: auto

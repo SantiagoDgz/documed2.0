@@ -703,11 +703,11 @@ def summarize_notes(notes: str) -> str:
 
 
 def detect_llm_provider() -> str:
-    preferred = normalize_text(app.config.get("GROK_PROVIDER", "auto"))
+    preferred = normalize_text(app.config.get("GROQ_PROVIDER", "auto"))
     if preferred in {"xai", "groq"}:
         return preferred
 
-    api_key = app.config["GROK_API_KEY"].strip()
+    api_key = app.config["GROQ_API_KEY"].strip()
     if api_key.startswith("gsk_"):
         return "groq"
     return "xai"
@@ -743,7 +743,7 @@ def call_llm_chat(
     max_tokens: int,
     temperature: float,
 ) -> tuple[str | None, str]:
-    api_key = app.config["GROK_API_KEY"].strip()
+    api_key = app.config["GROQ_API_KEY"].strip()
     if not api_key:
         return None, "API key no configurada"
 
