@@ -715,7 +715,7 @@ def detect_llm_provider() -> str:
 
 def get_model_candidates() -> list[str]:
     provider = detect_llm_provider()
-    preferred_model = app.config.get("GROK_MODEL", "").strip()
+    preferred_model = app.config.get("GROQ_MODEL", "").strip()
 
     if provider == "groq":
         defaults = [
@@ -792,7 +792,7 @@ def call_llm_chat(
     return None, last_error
 
 
-def summarize_with_grok(notes: str) -> str | None:
+def summarize_with_groq(notes: str) -> str | None:
     prompt = (
         "Resume el siguiente texto clinico en maximo 2 lineas, "
         "en espanol y con foco medico practico para seguimiento:\n\n"
@@ -1338,12 +1338,12 @@ def local_staff_chat_fallback(
     )
 
 
-def chat_with_grok_for_staff(
+def chat_with_groq_for_staff(
     chat_history: list[dict[str, str]],
     patient_context: dict[str, Any] | None,
     knowledge_refs: list[dict[str, Any]],
 ) -> tuple[str | None, str]:
-    if not app.config["GROK_API_KEY"].strip():
+    if not app.config["GROQ_API_KEY"].strip():
         return None, "API key no configurada"
 
     system_prompt = (
@@ -1857,9 +1857,9 @@ def ai_panel() -> str:
     patients = db.execute("SELECT * FROM patients ORDER BY consultation_date DESC").fetchall()
     disease_catalog_count = len(get_disease_catalog_entries())
     action = request.form.get("action", "") if request.method == "POST" else ""
-    has_grok_api_key = bool(app.config["GROK_API_KEY"].strip())
-    # Default behavior: use Grok whenever API key is configured.
-    run_grok = has_grok_api_key
+    has_groq_api_key = bool(app.config["GROQ_API_KEY"].strip())
+    # Default behavior: use GROQ whenever API key is configured.
+    run_groq = has_groq_api_key
     force_reanalyze = action == "reanalyze"
     chat_history = session.get("ai_chat_history", [])
     last_chat_references = session.get("ai_chat_last_references", [])
@@ -1875,9 +1875,9 @@ def ai_panel() -> str:
         if selected_patient is not None:
             selected_patient_context = build_patient_context(selected_patient)
 
-    if run_grok and not has_grok_api_key:
-        flash("No hay API key configurada para ejecutar Grok.", "error")
-        run_grok = False
+    if run_groq and not has_groq_api_key:
+        flash("No hay API key configurada para ejecutar GROQ.", "error")
+        run_groq = False
 
     if action == "chat":
         chat_message = request.form.get("chat_message", "").strip()
@@ -1898,7 +1898,7 @@ def ai_panel() -> str:
 
             references = retrieve_medical_knowledge(chat_message, selected_patient_context)
             chat_history.append({"role": "user", "content": chat_message})
-            assistant_reply, llm_runtime_status = chat_with_grok_for_staff(
+            assistant_reply, llm_runtime_status = chat_with_groq_for_staff(
                 chat_history,
                 selected_patient_context,
                 references,
@@ -1934,7 +1934,7 @@ def ai_panel() -> str:
 
     insights = []
     cache_hits = 0
-    generated_with_grok = 0
+    generated_with_groq = 0
     local_fallbacks = 0
 
     for patient in patients:
@@ -1943,7 +1943,7 @@ def ai_panel() -> str:
         risk_details = assess_risk_details(patient)
         risk_reason_short = "; ".join(risk_details["reasons"][:2])
 
-        if run_grok:
+        if run_groq:
             fingerprint = build_summary_fingerprint(patient)
             cached_summary = patient["ai_summary_cache"]
             cached_fingerprint = patient["ai_summary_fingerprint"]
@@ -1953,13 +1953,13 @@ def ai_panel() -> str:
                 not force_reanalyze
                 and cached_summary
                 and cached_fingerprint == fingerprint
-                and cached_model == app.config["GROK_MODEL"]
+                and cached_model == app.config["GROQ_MODEL"]
             ):
                 summary = cached_summary
                 summary_source = "cache"
                 cache_hits += 1
             else:
-                ai_summary = summarize_with_grok(patient["medical_notes"])
+                ai_summary = summarize_with_groq(patient["medical_notes"])
                 if ai_summary:
                     cached_at = datetime.now().isoformat(timespec="seconds")
                     db.execute(
@@ -1974,14 +1974,14 @@ def ai_panel() -> str:
                         (
                             ai_summary,
                             fingerprint,
-                            app.config["GROK_MODEL"],
+                            app.config["GROQ_MODEL"],
                             cached_at,
                             patient["id"],
                         ),
                     )
                     summary = ai_summary
-                    summary_source = "grok"
-                    generated_with_grok += 1
+                    summary_source = "groq"
+                    generated_with_groq += 1
                 else:
                     summary_source = "local-fallback"
                     local_fallbacks += 1
@@ -1999,7 +1999,7 @@ def ai_panel() -> str:
             }
         )
 
-    if run_grok:
+    if run_groq:
         db.commit()
 
     return render_template(
@@ -2007,10 +2007,10 @@ def ai_panel() -> str:
         insights=insights,
         patients=patients,
         disease_catalog_count=disease_catalog_count,
-        has_grok_api_key=has_grok_api_key,
-        used_grok=run_grok,
+        has_groq_api_key=has_groq_api_key,
+        used_groq=run_groq,
         cache_hits=cache_hits,
-        generated_with_grok=generated_with_grok,
+        generated_with_groq=generated_with_groq,
         local_fallbacks=local_fallbacks,
         llm_runtime_status=llm_runtime_status,
         llm_provider=detect_llm_provider(),

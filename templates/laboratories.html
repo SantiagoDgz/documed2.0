@@ -87,7 +87,7 @@
 </section>
 
 <section class="panel">
-    <h2>Chat annIA de laboratorio (potenciada por Grok)</h2>
+    <h2>Chat annIA de laboratorio (potenciada por GROQ)</h2>
     <p>Analiza en conjunto el panel de laboratorio del paciente (todos los resultados de la fecha más reciente).</p>
     {% if lab_llm_status %}
         <p><strong>Estado IA:</strong> {{ lab_llm_status }}</p>
@@ -121,13 +121,13 @@
         {% if lab_chat_history %}
             {% for item in lab_chat_history %}
                 <article class="chat-message {{ item['role'] }}">
-                    <strong>{{ 'Médico' if item['role'] == 'user' else 'annIA Lab (Grok)' }}</strong>
+                    <strong>{{ 'Médico' if item['role'] == 'user' else 'annIA Lab (GROQ)' }}</strong>
                     <p>{{ item['content'] }}</p>
                 </article>
             {% endfor %}
         {% else %}
             <article class="chat-message assistant">
-                <strong>annIA Lab (potenciada por Grok)</strong>
+                <strong>annIA Lab (potenciada por GROQ)</strong>
                 <p>Selecciona solo el paciente y recibirás un análisis integral del panel de laboratorio más reciente.</p>
             </article>
         {% endif %}
